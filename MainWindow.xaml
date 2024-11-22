@@ -26,7 +26,7 @@
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="20"></ColumnDefinition>
-            <ColumnDefinition Width="300"></ColumnDefinition>
+            <ColumnDefinition Width="45"></ColumnDefinition>
             <ColumnDefinition Width="300"></ColumnDefinition>
             <ColumnDefinition Width="*"></ColumnDefinition>
             <ColumnDefinition Width="20"></ColumnDefinition>
@@ -36,8 +36,34 @@
         <TabControl Style="{DynamicResource MahApps.Styles.TabControl.Animated}" 
                     Grid.Row="1" Grid.RowSpan="3" Grid.Column="1" Grid.ColumnSpan="3" 
                     BorderThickness="3" BorderBrush="Black">
-            <TabItem Header="Snaps Viewer" BorderThickness="2" mah:HeaderedControlHelper.HeaderFontSize="15" BorderBrush="Black"/>
-            <TabItem Header="Snap Tools" BorderThickness="2" mah:HeaderedControlHelper.HeaderFontSize="15" BorderBrush="Black"/>
+            <TabItem Header="Snap Viewer" BorderThickness="2" mah:HeaderedControlHelper.HeaderFontSize="15" BorderBrush="Black">
+                <StackPanel Orientation="Horizontal">
+                    
+                    <Button Style="{StaticResource MahApps.Styles.Button.Square}" Width="135" Height="28" Margin="45,0,0,390">
+                        <TextBlock Text="Load Snapshot"/>
+                    </Button>
+                    
+                    <Button Style="{StaticResource MahApps.Styles.Button.Square}" Width="165" Height="28" Margin="320,0,0,390">
+                        <TextBlock Text="Load Snapshot(s) directory"/>
+                    </Button>
+                    
+                    <Label Margin="55,0,0,380" Height="28">SnapsList:</Label>
+
+                    <ListBox Margin="-60,35,0,0" BorderThickness="3" BorderBrush="Black" Width="125" Height="390" MaxWidth="125" MaxHeight="390"/>
+
+                    <Image Margin="0,0,0,0">
+                        
+                    </Image>
+
+
+                </StackPanel>
+
+
+                    
+            </TabItem>
+            <TabItem Header="Snap Tools" BorderThickness="2" mah:HeaderedControlHelper.HeaderFontSize="15" BorderBrush="Black">
+                
+            </TabItem>
         </TabControl>
 
         
