@@ -15,14 +15,13 @@
         BorderBrush="Black"
         BorderThickness="3">
     <Grid>
-        
         <Grid.RowDefinitions>
-            <RowDefinition Height="50"/>
+            <RowDefinition Height="20"/>
             <RowDefinition Height="300"/>
             <RowDefinition Height="140"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="12"/>
-            <RowDefinition Height="28px"/>
+            <RowDefinition Height="28"/>
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
@@ -33,12 +32,12 @@
             <ColumnDefinition Width="20"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
-        
+
         <TabControl Style="{DynamicResource MahApps.Styles.TabControl.Animated}" 
                     Grid.Row="1" Grid.RowSpan="3" Grid.Column="1" Grid.ColumnSpan="3" 
-                    BorderThickness="5" BorderBrush="Black">
-            <TabItem Header="Snaps Viewer" BorderThickness="2" BorderBrush="Black"></TabItem>
-            <TabItem Header="Snap Control" BorderThickness="2" BorderBrush="Black"></TabItem>
+                    BorderThickness="3" BorderBrush="Black">
+            <TabItem Header="Snaps Viewer" BorderThickness="2" mah:HeaderedControlHelper.HeaderFontSize="15" BorderBrush="Black"/>
+            <TabItem Header="Snap Tools" BorderThickness="2" mah:HeaderedControlHelper.HeaderFontSize="15" BorderBrush="Black"/>
         </TabControl>
 
         
@@ -48,5 +47,6 @@
                 <TextBlock FontSize="16" Text="{Binding StatusBarText}"></TextBlock>
             </StatusBarItem>
         </StatusBar>
+        
     </Grid>
 </mah:MetroWindow>
