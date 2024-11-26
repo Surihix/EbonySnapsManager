@@ -4,13 +4,13 @@ namespace EbonySnapsManager
 {
     internal class SnapshotHelpers
     {
-        public static byte[] GetImageDataFromSnapshotFile(string imgFilePath)
+        public static byte[] GetImgDataFromSnapshotFile(string ssFile)
         {
             var imgData = new byte[] { };
 
-            if (File.Exists(imgFilePath))
+            if (File.Exists(ssFile))
             {
-                using (var ssReader = new BinaryReader(File.Open(imgFilePath, FileMode.Open, FileAccess.Read)))
+                using (var ssReader = new BinaryReader(File.Open(ssFile, FileMode.Open, FileAccess.Read)))
                 {
                     ssReader.BaseStream.Seek(32, SeekOrigin.Begin);
                     var imgSize = ssReader.ReadUInt32();

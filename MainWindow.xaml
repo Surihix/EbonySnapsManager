@@ -51,12 +51,12 @@
                         <ColumnDefinition Width="1*"/>
                     </Grid.ColumnDefinitions>
 
-                    <Button x:Name="LoadSnapshotBtn" Style="{StaticResource MahApps.Styles.Button.Square}" Grid.Row="1" Grid.Column="2" Click="LoadSnapshotBtn_Click">
-                        <TextBlock Text="Load Snapshot"/>
+                    <Button x:Name="LoadSnapshotBtn" Style="{StaticResource MahApps.Styles.Button.Square}" Grid.Row="1" Grid.Column="2" IsEnabled="{Binding IsUIenabled}" Click="LoadSnapshotBtn_Click">
+                        <TextBlock x:Name="LoadSnapshotBtnTxtBlock" Text="Load Snapshot"/>
                     </Button>
 
-                    <Button x:Name="LoadSnapshotDirectoryBtn" Style="{StaticResource MahApps.Styles.Button.Square}" Grid.Row="1" Grid.Column="4" Click="LoadSnapshotDirectoryBtn_Click">
-                        <TextBlock Text="Load Snapshot(s) directory"/>
+                    <Button x:Name="LoadSnapshotDirectoryBtn" Style="{StaticResource MahApps.Styles.Button.Square}" Grid.Row="1" Grid.Column="4" IsEnabled="{Binding IsUIenabled}" Click="LoadSnapshotDirectoryBtn_Click">
+                        <TextBlock x:Name="LoadSnapshotDirectoryBtnTxtBlock" Text="Load Snapshot(s) directory"/>
                     </Button>
 
                     <TextBlock x:Name="SnapshotListTxtBlock" Grid.Row="2" Grid.Column="6" FontSize="15">SnapsList:</TextBlock>
@@ -65,7 +65,7 @@
 
                     <TextBlock x:Name="SnapViewerImgBoxTxtBlock" Grid.Row="3" Grid.Column="3" FontSize="15" VerticalAlignment="Center" HorizontalAlignment="Center">Image Panel</TextBlock>
 
-                    <Image x:Name="SnapViewerImgBox" Grid.Row="3" Grid.Column="2" Grid.RowSpan="1" Grid.ColumnSpan="3" RenderOptions.BitmapScalingMode="HighQuality"/>
+                    <Image x:Name="SnapViewerImgBox" Grid.Row="3" Grid.Column="2" Grid.RowSpan="1" Grid.ColumnSpan="3" Source="{Binding BitmapSrc0}" RenderOptions.BitmapScalingMode="HighQuality"/>
                 </Grid>
             </TabItem>
 
@@ -90,18 +90,18 @@
                         <ColumnDefinition Width="1.5*"/>
                     </Grid.ColumnDefinitions>
 
-                    <Button x:Name="LoadImgBtn" Style="{StaticResource MahApps.Styles.Button.Square}" Grid.Row="1" Grid.Column="2" Click="LoadImageBtn_Click">
-                        <TextBlock Text="Load Image"/>
+                    <Button x:Name="LoadImgBtn" Style="{StaticResource MahApps.Styles.Button.Square}" Grid.Row="1" Grid.Column="2" IsEnabled="{Binding IsUIenabled}" Click="LoadImageBtn_Click">
+                        <TextBlock x:Name="LoadImgBtnTxtBlock" Text="Load Image"/>
                     </Button>
 
-                    <StackPanel x:Name="SnapToolsTabStackPanel" Grid.Row="3" Grid.Column="6" VerticalAlignment="Center">
+                    <StackPanel x:Name="SnapToolsTabStackPanel" Grid.Row="3" Grid.Column="6" VerticalAlignment="Center" IsEnabled="{Binding IsUIenabled}">
 
                         <Button x:Name="AddNewSnapshotBtn" Style="{StaticResource MahApps.Styles.Button.Square}" Margin="0,10,0,0" Click="AddNewSnapshotBtn_Click">
-                            <TextBlock Text="Add as new snap"/>
+                            <TextBlock x:Name="AddNewSnapshotBtnTxtBlock" Text="Add as new snap"/>
                         </Button>
 
                         <Button x:Name="ReplaceSnapshotBtn" Style="{StaticResource MahApps.Styles.Button.Square}" Margin="0,15,0,0" Click="ReplaceSnapshotBtn_Click">
-                            <TextBlock Text="Replace a snap"/>
+                            <TextBlock x:Name="ReplaceSnapshotBtnTxtBlock" Text="Replace a snap"/>
                         </Button>
 
                         <GroupBox x:Name="SnapshotToolsGrpBox" Style="{DynamicResource MahApps.Styles.Clean}" Header="Snapshot Control :"
@@ -113,11 +113,11 @@
                             <StackPanel x:Name="SnapshotToolsGrpBoxStackPanel" Margin="0,0,0,15">
 
                                 <Button x:Name="ImportSnapsFromSaveBtn" Style="{StaticResource MahApps.Styles.Button.Square}" Margin="5,20,5,0" Click="ImportSnapsFromSaveBtn_Click">
-                                    <TextBlock Text="Import snaps from a save"/>
+                                    <TextBlock x:Name="ImportSnapsFromSaveBtnTxtBlock" Text="Import snaps from a save"/>
                                 </Button>
 
                                 <Button x:Name="AdjustSnapshotBtn" Style="{StaticResource MahApps.Styles.Button.Square}" Margin="5,15,5,0" Click="AdjustSnapshotBtn_Click">
-                                    <TextBlock Text="Adjust snapshots"/>
+                                    <TextBlock x:Name="AdjustSnapshotBtnTxtBlock" Text="Adjust snapshots"/>
                                 </Button>
                                 
                             </StackPanel>
@@ -126,7 +126,7 @@
 
                     <TextBlock x:Name="SnapToolsImgBoxTxtBlock" Grid.Row="3" Grid.Column="3" FontSize="15" VerticalAlignment="Center" HorizontalAlignment="Center">Image Panel</TextBlock>
 
-                    <Image x:Name="SnapToolsImgBox" Grid.Row="3" Grid.Column="2" Grid.RowSpan="1" Grid.ColumnSpan="3" RenderOptions.BitmapScalingMode="HighQuality"/>
+                    <Image x:Name="SnapToolsImgBox" Grid.Row="3" Grid.Column="2" Grid.RowSpan="1" Grid.ColumnSpan="3" Source="{Binding BitmapSrc1}" RenderOptions.BitmapScalingMode="HighQuality"/>
                 
                 </Grid>
             </TabItem>
@@ -136,7 +136,7 @@
         <StatusBar x:Name="AppStatusBar" Grid.Row="5" Grid.ColumnSpan="5">
             <StatusBarItem x:Name="AppStatusBarItem" FontSize="16"></StatusBarItem>
             <StatusBarItem>
-                <TextBlock x:Name="AppStatusBarTxt" FontSize="16"></TextBlock>
+                <TextBlock x:Name="AppStatusBarTxtBlock" Text="{Binding StatusBarTxt}" FontSize="16"></TextBlock>
             </StatusBarItem>
         </StatusBar>
 
