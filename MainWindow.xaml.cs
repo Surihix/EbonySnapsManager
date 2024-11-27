@@ -7,6 +7,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 
 namespace EbonySnapsManager
 {
@@ -16,17 +17,18 @@ namespace EbonySnapsManager
     public partial class MainWindow : MetroWindow
     {
         private static readonly Dictionary<string, string> SnapshotFilesInDirDict = new Dictionary<string, string>();
-        private readonly AppViewModel ViewModelInstance = new AppViewModel();
+        private readonly AppViewModel AppViewModelInstance = new AppViewModel();
+        private static byte[] CurrentImgData = new byte[] { };
 
-        private static TextBlock AppStatusTxtBlockComp { get; set; }
+        private static string CurrentSSName { get; set; }
         private static ListBox SnapshotListBoxComp { get; set; }
 
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = ViewModelInstance;
-            ViewModelInstance.IsUIenabled = true;
-            ViewModelInstance.StatusBarTxt = "App launched!";
+            DataContext = AppViewModelInstance;
+            AppViewModelInstance.IsUIenabled = true;
+            AppViewModelInstance.StatusBarTxt = "App launched!";
         }
 
 
@@ -40,8 +42,10 @@ namespace EbonySnapsManager
 
             if (snapshotSelect.ShowDialog() == true)
             {
-                ViewModelInstance.BitmapSrc0 = null;
-                DrawOnImgBox(SnapshotHelpers.GetImgDataFromSnapshotFile(snapshotSelect.FileName), 0, Path.GetFileName(snapshotSelect.FileName));
+                AppViewModelInstance.BitmapSrc0 = null;
+                CurrentImgData = SnapshotHelpers.GetImgDataFromSnapshotFile(snapshotSelect.FileName);
+                CurrentSSName = Path.GetFileName(snapshotSelect.FileName);
+                DrawOnImgBox(CurrentImgData, 0, CurrentSSName);
             }
         }
 
@@ -66,9 +70,8 @@ namespace EbonySnapsManager
                     }
                     else
                     {
-                        ViewModelInstance.StatusBarTxt = "Loading snapshot files....";
-                        ViewModelInstance.IsUIenabled = false;
-                        AppStatusTxtBlockComp = (TextBlock)FindName("AppStatusBarTxtBlock");
+                        AppViewModelInstance.StatusBarTxt = "Loading snapshot files....";
+                        AppViewModelInstance.IsUIenabled = false;
                         SnapshotListBoxComp = (ListBox)FindName("SnapshotListbox");
 
                         System.Threading.Tasks.Task.Run(() =>
@@ -87,8 +90,8 @@ namespace EbonySnapsManager
                             }
                             finally
                             {
-                                Dispatcher.BeginInvoke(new Action(() => ViewModelInstance.IsUIenabled = true));
-                                AppStatusTxtBlockComp.BeginInvoke(new Action(() => AppStatusTxtBlockComp.Text = "Loaded snapshot files from directory"));
+                                Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.IsUIenabled = true));
+                                Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.StatusBarTxt = "Loaded snapshot files from directory"));
                             }
                         });
                     }
@@ -96,7 +99,7 @@ namespace EbonySnapsManager
                 catch (Exception ex)
                 {
                     MessageBox.Show($"{ex}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    ViewModelInstance.IsUIenabled = true;
+                    AppViewModelInstance.IsUIenabled = true;
                 }
             }
         }
@@ -109,7 +112,9 @@ namespace EbonySnapsManager
                 if (File.Exists(SnapshotFilesInDirDict[(string)SnapshotListbox.SelectedItem]))
                 {
                     var imgFile = SnapshotFilesInDirDict[(string)SnapshotListbox.SelectedItem];
-                    DrawOnImgBox(SnapshotHelpers.GetImgDataFromSnapshotFile(imgFile), 0, Path.GetFileName(imgFile));
+                    CurrentImgData = SnapshotHelpers.GetImgDataFromSnapshotFile(imgFile);
+                    CurrentSSName = Path.GetFileName(imgFile);
+                    DrawOnImgBox(CurrentImgData, 0, CurrentSSName);
                 }
             }
         }
@@ -133,7 +138,7 @@ namespace EbonySnapsManager
 
         private void AddNewSnapshotBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (ViewModelInstance.BitmapSrc1 == null)
+            if (AppViewModelInstance.BitmapSrc1 == null)
             {
                 MessageBox.Show("A valid image file is not selected. Please load an image file into the panel before using this option", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
@@ -164,7 +169,7 @@ namespace EbonySnapsManager
 
         private void ReplaceSnapshotBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (ViewModelInstance.BitmapSrc1 == null)
+            if (AppViewModelInstance.BitmapSrc1 == null)
             {
                 MessageBox.Show("A valid image file is not selected. Please load an image file into the panel before using this option", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
@@ -241,6 +246,55 @@ namespace EbonySnapsManager
         }
 
 
+        private void SaveImgOption_Click(object sender, RoutedEventArgs e)
+        {
+            var sfd = new SaveFileDialog()
+            {
+                Title = "Save Image file",
+                FileName = $"{Path.GetFileNameWithoutExtension(CurrentSSName)}",
+                Filter = "All files (*.*)|*.*",
+                OverwritePrompt = true,
+                RestoreDirectory = true
+            };
+
+            if (sfd.ShowDialog() == true && sfd.FileName != null)
+            {
+                var detectedExtn = Path.GetExtension(sfd.FileName);
+
+                using (var imgStream = new MemoryStream())
+                {
+                    using (var imgReader = new BinaryReader(imgStream))
+                    {
+                        imgStream.Write(CurrentImgData, 0, CurrentImgData.Length);
+                        imgStream.Seek(0, SeekOrigin.Begin);
+
+                        switch (imgReader.ReadUInt16())
+                        {
+                            case 55551:
+                                detectedExtn += ".jpg";
+                                break;
+
+                            case 20617:
+                                detectedExtn += ".png";
+                                break;
+                        }
+                    }
+                }
+
+                var outImgFile = Path.Combine(Path.GetDirectoryName(sfd.FileName), Path.GetFileNameWithoutExtension(sfd.FileName) + detectedExtn);
+
+                if (File.Exists(outImgFile))
+                {
+                    File.Delete(outImgFile);
+                }
+
+                File.WriteAllBytes(outImgFile, CurrentImgData);
+
+                AppViewModelInstance.StatusBarTxt = $"Saved \"{Path.GetFileName(outImgFile)}\"";
+            }
+        }
+
+
         private void DrawOnImgBox(byte[] imgData, int bitmapSrcId, string imgFileName)
         {
             var bitmap = new BitmapImage();
@@ -258,14 +312,14 @@ namespace EbonySnapsManager
 
             if (bitmapSrcId == 0)
             {
-                ViewModelInstance.BitmapSrc0 = bitmap;
+                AppViewModelInstance.BitmapSrc0 = bitmap;
             }
             else
             {
-                ViewModelInstance.BitmapSrc1 = bitmap;
+                AppViewModelInstance.BitmapSrc1 = bitmap;
             }
 
-            AppStatusBarTxtBlock.Text = $"Loaded \"{imgFileName}\"";
+            AppViewModelInstance.StatusBarTxt = $"Loaded \"{imgFileName}\"";
         }
     }
 }
