@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Text;
 
 namespace EbonySnapsManager
 {
@@ -57,6 +58,46 @@ namespace EbonySnapsManager
             File.WriteAllBytes(outImgFile, imgData);
 
             return outImgFile;
+        }
+
+
+        public static void CreateNewSnapshotFile(string ssFile, byte[] imgData)
+        {
+            using (var ssStream = new MemoryStream())
+            {
+                using (var ssWriter = new BinaryWriter(ssStream))
+                {
+                    ssWriter.Write(Encoding.UTF8.GetBytes("ebb\0"));
+                    ssWriter.Write((uint)4);
+                    ssWriter.Write((uint)0);
+                    ssWriter.Write((uint)imgData.Length + 36);
+                    ssWriter.Write(4279566338);
+                    ssWriter.Write((uint)1);
+                    ssWriter.Write(0xA4CEBC89AE0F8ED9);
+
+                    ssWriter.Write((uint)imgData.Length);
+                    ssWriter.Write(imgData);
+
+                    ssWriter.Write((uint)1);
+                    ssWriter.Write((uint)49);
+                    ssWriter.Write(Encoding.UTF8.GetBytes("Black.Save.Snapshot.SaveSnapshotImageBinaryStruct"));
+                    ssWriter.Write(0xA4CEBC89AE0F8ED9);
+                    ssWriter.Write(ulong.MaxValue);
+                    ssWriter.Write((ushort)1);
+                    ssWriter.Write((uint)7);
+                    ssWriter.Write(Encoding.UTF8.GetBytes("binary_"));
+                    ssWriter.Write((uint)27);
+                    ssWriter.Write(Encoding.UTF8.GetBytes("Luminous.Core.Memory.Buffer"));
+                    ssWriter.Write((uint)0);
+                    ssWriter.Write((uint)24);
+                    ssWriter.Write((uint)0x00160001);
+                    ssWriter.Write((byte)0);
+
+
+                    ssWriter.Seek(0, SeekOrigin.Begin);
+                    File.WriteAllBytes(ssFile, ssStream.ToArray());
+                }
+            }
         }
     }
 }

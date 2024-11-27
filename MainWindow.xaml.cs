@@ -18,6 +18,8 @@ namespace EbonySnapsManager
     {
         private static readonly Dictionary<string, string> SnapshotFilesInDirDict = new Dictionary<string, string>();
         private readonly AppViewModel AppViewModelInstance = new AppViewModel();
+        
+        public static byte[] CurrentSnapshotData = new byte[] { };
         public static byte[] CurrentImgData = new byte[] { };
 
         public static string CurrentSSName { get; set; }
@@ -43,9 +45,9 @@ namespace EbonySnapsManager
             if (snapshotSelect.ShowDialog() == true)
             {
                 AppViewModelInstance.BitmapSrc0 = null;
-                CurrentImgData = SnapshotHelpers.GetImgDataFromSnapshotFile(snapshotSelect.FileName);
+                CurrentSnapshotData = SnapshotHelpers.GetImgDataFromSnapshotFile(snapshotSelect.FileName);
                 CurrentSSName = Path.GetFileName(snapshotSelect.FileName);
-                DrawOnImgBox(CurrentImgData, 0, CurrentSSName);
+                DrawOnImgBox(CurrentSnapshotData, 0, CurrentSSName);
             }
         }
 
@@ -63,7 +65,7 @@ namespace EbonySnapsManager
 
             if (sfd.ShowDialog() == true && sfd.FileName != null)
             {
-                var outImgFile = SnapshotHelpers.SaveImgDataToFile(sfd.FileName, Path.GetDirectoryName(sfd.FileName), CurrentImgData);
+                var outImgFile = SnapshotHelpers.SaveImgDataToFile(sfd.FileName, Path.GetDirectoryName(sfd.FileName), CurrentSnapshotData);
 
                 MessageBox.Show($"Saved image file \"{Path.GetFileName(outImgFile)}\"", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 AppViewModelInstance.StatusBarTxt = $"Saved \"{Path.GetFileName(outImgFile)}\"";
@@ -133,9 +135,9 @@ namespace EbonySnapsManager
                 if (File.Exists(SnapshotFilesInDirDict[(string)SnapshotListbox.SelectedItem]))
                 {
                     var imgFile = SnapshotFilesInDirDict[(string)SnapshotListbox.SelectedItem];
-                    CurrentImgData = SnapshotHelpers.GetImgDataFromSnapshotFile(imgFile);
+                    CurrentSnapshotData = SnapshotHelpers.GetImgDataFromSnapshotFile(imgFile);
                     CurrentSSName = Path.GetFileName(imgFile);
-                    DrawOnImgBox(CurrentImgData, 0, CurrentSSName);
+                    DrawOnImgBox(CurrentSnapshotData, 0, CurrentSSName);
                 }
             }
         }
@@ -199,39 +201,42 @@ namespace EbonySnapsManager
             if (imgSelect.ShowDialog() == true)
             {
                 var imgFile = imgSelect.FileName;
-                DrawOnImgBox(File.ReadAllBytes(imgFile), 1, Path.GetFileName(imgFile));
+                CurrentImgData = File.ReadAllBytes(imgFile);
+                DrawOnImgBox(CurrentImgData, 1, Path.GetFileName(imgFile));
             }
         }
 
 
         private void AddNewSnapshotBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (AppViewModelInstance.BitmapSrc1 == null)
-            {
-                MessageBox.Show("A valid image file is not selected. Please load an image file into the panel before using this option", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-            else
-            {
-                var saveFileSelect = new OpenFileDialog()
-                {
-                    Title = "Select a FFXV save file",
-                    Filter = "FFXV save file (gameplay0.save)|gameplay0.save"
-                };
+            MessageBox.Show("Function not implemented");
 
-                if (saveFileSelect.ShowDialog() == true)
-                {
-                    var snapshotlinkFileSelect = new OpenFileDialog()
-                    {
-                        Title = "Select a snapshotlink file",
-                        Filter = "snapshotlink file (snapshotlink.sl)|snapshotlink.sl"
-                    };
+            //if (AppViewModelInstance.BitmapSrc1 == null)
+            //{
+            //    MessageBox.Show("A valid image file is not selected. Please load an image file into the panel before using this option", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            //}
+            //else
+            //{
+            //    var saveFileSelect = new OpenFileDialog()
+            //    {
+            //        Title = "Select a FFXV save file",
+            //        Filter = "FFXV save file (gameplay0.save)|gameplay0.save"
+            //    };
 
-                    if (snapshotlinkFileSelect.ShowDialog() == true)
-                    {
+            //    if (saveFileSelect.ShowDialog() == true)
+            //    {
+            //        var snapshotlinkFileSelect = new OpenFileDialog()
+            //        {
+            //            Title = "Select a snapshotlink file",
+            //            Filter = "snapshotlink file (snapshotlink.sl)|snapshotlink.sl"
+            //        };
 
-                    }
-                }
-            }
+            //        if (snapshotlinkFileSelect.ShowDialog() == true)
+            //        {
+
+            //        }
+            //    }
+            //}
         }
 
 
@@ -245,13 +250,29 @@ namespace EbonySnapsManager
             {
                 var snapshotFileSelect = new OpenFileDialog()
                 {
-                    Title = "Select a FFXV Snapshot file",
+                    Title = "Select a FFXV Snapshot file to replace",
                     Filter = "Snapshot file (*.ss)|*.ss"
                 };
 
                 if (snapshotFileSelect.ShowDialog() == true)
                 {
+                    var backupAllowed = MessageBox.Show("Would you like to backup the snapshot file that you are replacing?", "Backup", MessageBoxButton.YesNo, MessageBoxImage.Question);
 
+                    if (backupAllowed == MessageBoxResult.Yes)
+                    {
+                        if (File.Exists(snapshotFileSelect.FileName + ".bak"))
+                        {
+                            File.Delete(snapshotFileSelect.FileName + ".bak");
+                        }
+
+                        File.Move(snapshotFileSelect.FileName, snapshotFileSelect.FileName + ".bak");
+                    }
+
+                    SnapshotHelpers.CreateNewSnapshotFile(snapshotFileSelect.FileName, CurrentImgData);
+
+                    MessageBox.Show($"Replaced image data in \"{Path.GetFileName(snapshotFileSelect.FileName)}\"", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    AppViewModelInstance.StatusBarTxt = $"Replaced data in \"{Path.GetFileName(snapshotFileSelect.FileName)}\"";
                 }
             }
         }
@@ -259,58 +280,62 @@ namespace EbonySnapsManager
 
         private void ImportSnapsFromSaveBtn_Click(object sender, RoutedEventArgs e)
         {
-            var saveFileSelect = new OpenFileDialog()
-            {
-                Title = "Select a FFXV save file",
-                Filter = "FFXV save file (gameplay0.save)|gameplay0.save"
-            };
+            MessageBox.Show("Function not implemented");
 
-            if (saveFileSelect.ShowDialog() == true)
-            {
-                var snapshotlinkFileSelect = new OpenFileDialog()
-                {
-                    Title = "Select a snapshotlink file",
-                    Filter = "snapshotlink file (snapshotlink.sl)|snapshotlink.sl"
-                };
+            //var saveFileSelect = new OpenFileDialog()
+            //{
+            //    Title = "Select a FFXV save file",
+            //    Filter = "FFXV save file (gameplay0.save)|gameplay0.save"
+            //};
 
-                if (snapshotlinkFileSelect.ShowDialog() == true)
-                {
+            //if (saveFileSelect.ShowDialog() == true)
+            //{
+            //    var snapshotlinkFileSelect = new OpenFileDialog()
+            //    {
+            //        Title = "Select a snapshotlink file",
+            //        Filter = "snapshotlink file (snapshotlink.sl)|snapshotlink.sl"
+            //    };
 
-                }
-            }
+            //    if (snapshotlinkFileSelect.ShowDialog() == true)
+            //    {
+
+            //    }
+            //}
         }
 
 
         private void AdjustSnapshotBtn_Click(object sender, RoutedEventArgs e)
         {
-            var saveFileSelect = new OpenFileDialog()
-            {
-                Title = "Select a FFXV save file",
-                Filter = "FFXV save file (gameplay0.save)|gameplay0.save"
-            };
+            MessageBox.Show("Function not implemented");
 
-            if (saveFileSelect.ShowDialog() == true)
-            {
-                var snapshotlinkFileSelect = new OpenFileDialog()
-                {
-                    Title = "Select a snapshotlink file",
-                    Filter = "snapshotlink file (snapshotlink.sl)|snapshotlink.sl"
-                };
+            //var saveFileSelect = new OpenFileDialog()
+            //{
+            //    Title = "Select a FFXV save file",
+            //    Filter = "FFXV save file (gameplay0.save)|gameplay0.save"
+            //};
 
-                if (snapshotlinkFileSelect.ShowDialog() == true)
-                {
-                    var snapshotDirSelect = new VistaFolderBrowserDialog()
-                    {
-                        Description = "Select a FFXV snapshot directory",
-                        UseDescriptionForTitle = true
-                    };
+            //if (saveFileSelect.ShowDialog() == true)
+            //{
+            //    var snapshotlinkFileSelect = new OpenFileDialog()
+            //    {
+            //        Title = "Select a snapshotlink file",
+            //        Filter = "snapshotlink file (snapshotlink.sl)|snapshotlink.sl"
+            //    };
 
-                    if (snapshotDirSelect.ShowDialog() == true)
-                    {
+            //    if (snapshotlinkFileSelect.ShowDialog() == true)
+            //    {
+            //        var snapshotDirSelect = new VistaFolderBrowserDialog()
+            //        {
+            //            Description = "Select a FFXV snapshot directory",
+            //            UseDescriptionForTitle = true
+            //        };
 
-                    }
-                }
-            }
+            //        if (snapshotDirSelect.ShowDialog() == true)
+            //        {
+
+            //        }
+            //    }
+            //}
         }
 
 
@@ -346,12 +371,13 @@ namespace EbonySnapsManager
         {
             if (e.ClickCount == 2)
             {
-                ImgFullScreenForm.ImgData = CurrentImgData;
+                ImgFullScreenForm.ImgData = CurrentSnapshotData;
 
                 var imgFullScreenForm = new ImgFullScreenForm();
                 imgFullScreenForm.Show();
             }
         }
+
 
         private void SnapToolsImgBox_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
