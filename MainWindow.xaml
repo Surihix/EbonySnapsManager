@@ -61,11 +61,31 @@
 
                     <TextBlock x:Name="SnapshotListTxtBlock" Grid.Row="2" Grid.Column="6" FontSize="15">SnapsList:</TextBlock>
 
-                    <ListBox x:Name="SnapshotListbox" Grid.Row="3" Grid.Column="6" BorderThickness="1" BorderBrush="LightGray" SelectionChanged="SnapshotListbox_SelectionChanged"/>
+                    <Grid x:Name="SnapshotListGrid" Grid.Row="3" Grid.Column="6" Grid.RowSpan="2">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="8*"/>
+                            <RowDefinition Height="0.5*"/>
+                            <RowDefinition Height="35"/>
+                            <RowDefinition Height="0.5*"/>
+                        </Grid.RowDefinitions>
 
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                                                
+                        <ListBox x:Name="SnapshotListbox" Grid.Row="0" Grid.Column="1" BorderThickness="1" BorderBrush="LightGray" SelectionChanged="SnapshotListbox_SelectionChanged"/>
+
+                        <Button x:Name="SaveSnapshotsInListBtn" Style="{StaticResource MahApps.Styles.Button.Square}" Grid.Row="2" Grid.Column="4" IsEnabled="{Binding IsUIenabled}" Click="SaveSnapshotsInListBtn_Click">
+                            <TextBlock x:Name="SaveSnapshotsInListBtnTxtBlock" Text="Save all Snapshot(s) on list"/>
+                        </Button>
+                    </Grid>
+                    
+                    <StackPanel x:Name="BatchPanel" Grid.Row="3" Grid.Column="6">
+                    </StackPanel>
+                    
                     <TextBlock x:Name="SnapViewerImgBoxTxtBlock" Grid.Row="3" Grid.Column="3" FontSize="15" VerticalAlignment="Center" HorizontalAlignment="Center">Image Panel</TextBlock>
 
-                    <Image x:Name="SnapViewerImgBox" Grid.Row="3" Grid.Column="2" Grid.RowSpan="1" Grid.ColumnSpan="3" Source="{Binding BitmapSrc0}" RenderOptions.BitmapScalingMode="HighQuality">
+                    <Image x:Name="SnapViewerImgBox" Grid.Row="3" Grid.Column="2" Grid.RowSpan="1" Grid.ColumnSpan="3" Source="{Binding BitmapSrc0}" RenderOptions.BitmapScalingMode="HighQuality" MouseDown="SnapViewerImgBox_MouseDown">
                         <Image.ContextMenu>
                             <ContextMenu>
                                 <MenuItem x:Name="SaveImgOption" Header="Save Image" Click="SaveImgOption_Click"/>
@@ -132,7 +152,7 @@
 
                     <TextBlock x:Name="SnapToolsImgBoxTxtBlock" Grid.Row="3" Grid.Column="3" FontSize="15" VerticalAlignment="Center" HorizontalAlignment="Center">Image Panel</TextBlock>
 
-                    <Image x:Name="SnapToolsImgBox" Grid.Row="3" Grid.Column="2" Grid.RowSpan="1" Grid.ColumnSpan="3" Source="{Binding BitmapSrc1}" RenderOptions.BitmapScalingMode="HighQuality"/>
+                    <Image x:Name="SnapToolsImgBox" Grid.Row="3" Grid.Column="2" Grid.RowSpan="1" Grid.ColumnSpan="3" Source="{Binding BitmapSrc1}" RenderOptions.BitmapScalingMode="HighQuality" MouseDown="SnapToolsImgBox_MouseDown"/>
                 
                 </Grid>
             </TabItem>

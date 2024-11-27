@@ -18,9 +18,9 @@ namespace EbonySnapsManager
     {
         private static readonly Dictionary<string, string> SnapshotFilesInDirDict = new Dictionary<string, string>();
         private readonly AppViewModel AppViewModelInstance = new AppViewModel();
-        private static byte[] CurrentImgData = new byte[] { };
+        public static byte[] CurrentImgData = new byte[] { };
 
-        private static string CurrentSSName { get; set; }
+        public static string CurrentSSName { get; set; }
         private static ListBox SnapshotListBoxComp { get; set; }
 
         public MainWindow()
@@ -46,6 +46,27 @@ namespace EbonySnapsManager
                 CurrentImgData = SnapshotHelpers.GetImgDataFromSnapshotFile(snapshotSelect.FileName);
                 CurrentSSName = Path.GetFileName(snapshotSelect.FileName);
                 DrawOnImgBox(CurrentImgData, 0, CurrentSSName);
+            }
+        }
+
+
+        private void SaveImgOption_Click(object sender, RoutedEventArgs e)
+        {
+            var sfd = new SaveFileDialog()
+            {
+                Title = "Save Image file",
+                FileName = $"{Path.GetFileNameWithoutExtension(CurrentSSName)}",
+                Filter = "All files (*.*)|*.*",
+                OverwritePrompt = true,
+                RestoreDirectory = true
+            };
+
+            if (sfd.ShowDialog() == true && sfd.FileName != null)
+            {
+                var outImgFile = SnapshotHelpers.SaveImgDataToFile(sfd.FileName, Path.GetDirectoryName(sfd.FileName), CurrentImgData);
+
+                MessageBox.Show($"Saved image file \"{Path.GetFileName(outImgFile)}\"", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                AppViewModelInstance.StatusBarTxt = $"Saved \"{Path.GetFileName(outImgFile)}\"";
             }
         }
 
@@ -115,6 +136,53 @@ namespace EbonySnapsManager
                     CurrentImgData = SnapshotHelpers.GetImgDataFromSnapshotFile(imgFile);
                     CurrentSSName = Path.GetFileName(imgFile);
                     DrawOnImgBox(CurrentImgData, 0, CurrentSSName);
+                }
+            }
+        }
+
+
+        private void SaveSnapshotsInListBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (SnapshotFilesInDirDict.Keys.Count != 0)
+            {
+                var snapshotsSaveDirSelect = new VistaFolderBrowserDialog()
+                {
+                    Description = "Select a directory to save the image file(s)",
+                    UseDescriptionForTitle = true
+                };
+
+                if (snapshotsSaveDirSelect.ShowDialog() == true)
+                {
+                    try
+                    {
+                        AppViewModelInstance.StatusBarTxt = "Saving snapshot files....";
+                        AppViewModelInstance.IsUIenabled = false;
+
+                        System.Threading.Tasks.Task.Run(() =>
+                        {
+                            try
+                            {
+                                foreach (var ssFile in SnapshotFilesInDirDict.Values)
+                                { 
+                                    if (File.Exists(ssFile))
+                                    {
+                                        _= SnapshotHelpers.SaveImgDataToFile(ssFile, snapshotsSaveDirSelect.SelectedPath, SnapshotHelpers.GetImgDataFromSnapshotFile(ssFile));
+                                    }
+                                }
+                            }
+                            finally
+                            {
+                                Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.IsUIenabled = true));
+                                MessageBox.Show("Finished saving all snapshot files from directory", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                                Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.StatusBarTxt = "Saved all snapshot files from directory"));
+                            }
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"{ex}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        AppViewModelInstance.IsUIenabled = true;
+                    }
                 }
             }
         }
@@ -246,55 +314,6 @@ namespace EbonySnapsManager
         }
 
 
-        private void SaveImgOption_Click(object sender, RoutedEventArgs e)
-        {
-            var sfd = new SaveFileDialog()
-            {
-                Title = "Save Image file",
-                FileName = $"{Path.GetFileNameWithoutExtension(CurrentSSName)}",
-                Filter = "All files (*.*)|*.*",
-                OverwritePrompt = true,
-                RestoreDirectory = true
-            };
-
-            if (sfd.ShowDialog() == true && sfd.FileName != null)
-            {
-                var detectedExtn = Path.GetExtension(sfd.FileName);
-
-                using (var imgStream = new MemoryStream())
-                {
-                    using (var imgReader = new BinaryReader(imgStream))
-                    {
-                        imgStream.Write(CurrentImgData, 0, CurrentImgData.Length);
-                        imgStream.Seek(0, SeekOrigin.Begin);
-
-                        switch (imgReader.ReadUInt16())
-                        {
-                            case 55551:
-                                detectedExtn += ".jpg";
-                                break;
-
-                            case 20617:
-                                detectedExtn += ".png";
-                                break;
-                        }
-                    }
-                }
-
-                var outImgFile = Path.Combine(Path.GetDirectoryName(sfd.FileName), Path.GetFileNameWithoutExtension(sfd.FileName) + detectedExtn);
-
-                if (File.Exists(outImgFile))
-                {
-                    File.Delete(outImgFile);
-                }
-
-                File.WriteAllBytes(outImgFile, CurrentImgData);
-
-                AppViewModelInstance.StatusBarTxt = $"Saved \"{Path.GetFileName(outImgFile)}\"";
-            }
-        }
-
-
         private void DrawOnImgBox(byte[] imgData, int bitmapSrcId, string imgFileName)
         {
             var bitmap = new BitmapImage();
@@ -320,6 +339,29 @@ namespace EbonySnapsManager
             }
 
             AppViewModelInstance.StatusBarTxt = $"Loaded \"{imgFileName}\"";
+        }
+
+
+        private void SnapViewerImgBox_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (e.ClickCount == 2)
+            {
+                ImgFullScreenForm.ImgData = CurrentImgData;
+
+                var imgFullScreenForm = new ImgFullScreenForm();
+                imgFullScreenForm.Show();
+            }
+        }
+
+        private void SnapToolsImgBox_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (e.ClickCount == 2)
+            {
+                ImgFullScreenForm.ImgData = CurrentImgData;
+
+                var imgFullScreenForm = new ImgFullScreenForm();
+                imgFullScreenForm.Show();
+            }
         }
     }
 }

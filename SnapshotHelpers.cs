@@ -23,6 +23,40 @@ namespace EbonySnapsManager
         }
 
 
+        public static string SaveImgDataToFile(string outImgSavetimeFileName, string imgSaveDir, byte[] imgData)
+        {
+            var detectedExtn = Path.GetExtension(outImgSavetimeFileName);
 
+            using (var imgStream = new MemoryStream())
+            {
+                using (var imgReader = new BinaryReader(imgStream))
+                {
+                    imgStream.Write(imgData, 0, imgData.Length);
+                    imgStream.Seek(0, SeekOrigin.Begin);
+
+                    switch (imgReader.ReadUInt16())
+                    {
+                        case 55551:
+                            detectedExtn += ".jpg";
+                            break;
+
+                        case 20617:
+                            detectedExtn += ".png";
+                            break;
+                    }
+                }
+            }
+
+            var outImgFile = Path.Combine(imgSaveDir, Path.GetFileNameWithoutExtension(outImgSavetimeFileName) + detectedExtn);
+
+            if (File.Exists(outImgFile))
+            {
+                File.Delete(outImgFile);
+            }
+
+            File.WriteAllBytes(outImgFile, imgData);
+
+            return outImgFile;
+        }
     }
 }
