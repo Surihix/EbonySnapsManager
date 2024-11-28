@@ -1,4 +1,5 @@
-﻿using MahApps.Metro.Controls;
+﻿using EbonySnapsManager.Helpers;
+using MahApps.Metro.Controls;
 using Microsoft.Win32;
 using Ookii.Dialogs.Wpf;
 using System;

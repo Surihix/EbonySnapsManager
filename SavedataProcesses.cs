@@ -1,4 +1,5 @@
 ﻿using EbonySnapsManager.Crypto;
+using EbonySnapsManager.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;

@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Text;
 
-namespace EbonySnapsManager
+namespace EbonySnapsManager.Helpers
 {
     internal class SnapshotHelpers
     {

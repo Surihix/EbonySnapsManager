@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 
-namespace EbonySnapsManager
+namespace EbonySnapsManager.Helpers
 {
     internal class SavedataHelpers
     {

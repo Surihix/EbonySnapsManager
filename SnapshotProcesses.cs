@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using EbonySnapsManager.Helpers;
+using System.Collections.Generic;
 using System.IO;
 
 namespace EbonySnapsManager
