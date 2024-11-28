@@ -264,7 +264,7 @@ namespace EbonySnapsManager
                         File.Move(snapshotFileSelect.FileName, snapshotFileSelect.FileName + ".bak");
                     }
 
-                    SnapshotHelpers.CreateNewSnapshotFile(snapshotFileSelect.FileName, CurrentImgData);
+                    SnapshotHelpers.CreateSnapshotFile(snapshotFileSelect.FileName, CurrentImgData);
 
                     MessageBox.Show($"Replaced image data in \"{Path.GetFileName(snapshotFileSelect.FileName)}\"", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
 

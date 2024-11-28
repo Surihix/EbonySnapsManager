@@ -61,7 +61,7 @@ namespace EbonySnapsManager.Helpers
         }
 
 
-        public static void CreateNewSnapshotFile(string ssFile, byte[] imgData)
+        public static void CreateSnapshotFile(string ssFile, byte[] imgData)
         {
             using (var ssStream = new MemoryStream())
             {
