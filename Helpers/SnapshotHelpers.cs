@@ -5,12 +5,6 @@ namespace EbonySnapsManager
 {
     internal class SnapshotHelpers
     {
-        public static void RemoveBlankSnapslinkProcess(string saveFile, string snapshotDir)
-        {
-
-        }
-
-
         public static byte[] GetImgDataFromSnapshotFile(string ssFile)
         {
             var imgData = new byte[] { };

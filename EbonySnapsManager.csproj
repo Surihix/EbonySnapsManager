@@ -103,15 +103,18 @@
     <Compile Include="Crypto\MersenneTwister.cs" />
     <Compile Include="Crypto\SharedCryptoFunctions.cs" />
     <Compile Include="Extensions\BinaryReaderHelpers.cs" />
+    <Compile Include="Extensions\StreamHelpers.cs" />
     <Compile Include="ImgFullScreenForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ImgFullScreenForm.Designer.cs">
       <DependentUpon>ImgFullScreenForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="SaveFileHelpers.cs" />
-    <Compile Include="SnapshotHelpers.cs" />
+    <Compile Include="SavedataProcesses.cs" />
+    <Compile Include="Helpers\SavedataHelpers.cs" />
+    <Compile Include="Helpers\SnapshotHelpers.cs" />
     <Compile Include="AppViewModel.cs" />
+    <Compile Include="SnapshotProcesses.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
