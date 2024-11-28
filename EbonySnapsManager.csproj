@@ -177,4 +177,12 @@
     </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+cd /d "$(TargetDir)"
+
+for /R %25%25f in (*.pdb) do (
+    del "%25%25f"
+)</PostBuildEvent>
+  </PropertyGroup>
 </Project>

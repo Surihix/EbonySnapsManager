@@ -1,5 +1,4 @@
 ﻿using EbonySnapsManager.Crypto;
-using EbonySnapsManager.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,18 +8,6 @@ namespace EbonySnapsManager
 {
     internal class SnapshotProcesses
     {
-        public static void SaveSnapshotsInList(Dictionary<string, string> SnapshotFilesInDirDict, string snapshotsSaveDir)
-        {
-            foreach (var ssFile in SnapshotFilesInDirDict.Values)
-            {
-                if (File.Exists(ssFile))
-                {
-                    _ = SnapshotHelpers.SaveImgDataToFile(ssFile, snapshotsSaveDir, SnapshotHelpers.GetImgDataFromSnapshotFile(ssFile));
-                }
-            }
-        }
-
-
         public static void AddSnapsInLink()
         {
 
@@ -102,9 +89,9 @@ namespace EbonySnapsManager
                     updatedSnapshotlinkWriter.Write(dataTillShotStruct);
                     updatedSnapshotlinkWriter.Write(updatedShotCount);
 
-                    for (int i = 0; i < updatedShotCount; i++)
+                    foreach (var shotRecordData in shotRecordDataDict.Values)
                     {
-                        updatedSnapshotlinkWriter.Write(shotRecordDataDict[i]);
+                        updatedSnapshotlinkWriter.Write(shotRecordData);
                     }
 
                     updatedSnapshotlinkWriter.Write(nextShotId);

@@ -90,9 +90,9 @@ namespace EbonySnapsManager
                     updatedSaveDataWriter.Write(SavedataHelpers.SnapStructId);
                     updatedSaveDataWriter.Write(updatedSnapCount);
 
-                    for (int i = 0; i < updatedSnapCount; i++)
+                    foreach (var snapData in snapDataDict.Values)
                     {
-                        updatedSaveDataWriter.Write(snapDataDict[i]);
+                        updatedSaveDataWriter.Write(snapData);
                     }
 
                     updatedSaveDataWriter.Write(dataTillFooterOffset);

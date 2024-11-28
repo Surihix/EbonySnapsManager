@@ -85,46 +85,44 @@ namespace EbonySnapsManager
 
             if (snapshotDirSelect.ShowDialog() == true)
             {
-                try
+                var snapshotDir = Directory.GetFiles(snapshotDirSelect.SelectedPath, "*.ss", SearchOption.TopDirectoryOnly);
+
+                if (snapshotDir.Length == 0)
                 {
-                    var snapshotDir = Directory.GetFiles(snapshotDirSelect.SelectedPath, "*.ss", SearchOption.TopDirectoryOnly);
-
-                    if (snapshotDir.Length == 0)
-                    {
-                        MessageBox.Show("Unable to find valid FFXV snapshot files in the selected folder", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
-                    else
-                    {
-                        AppViewModelInstance.StatusBarTxt = "Loading snapshot files....";
-                        AppViewModelInstance.IsUIenabled = false;
-                        SnapshotListBoxComp = (ListBox)FindName("SnapshotListbox");
-
-                        Task.Run(() =>
-                        {
-                            try
-                            {
-                                SnapshotListBoxComp.BeginInvoke(new Action(() => SnapshotListBoxComp.Items.Clear()));
-                                SnapshotFilesInDirDict.Clear();
-
-                                foreach (var ssFile in snapshotDir)
-                                {
-                                    var ssFileName = Path.GetFileName(ssFile);
-                                    SnapshotFilesInDirDict.Add(ssFileName, ssFile);
-                                    SnapshotListBoxComp.BeginInvoke(new Action(() => SnapshotListBoxComp.Items.Add(ssFileName)));
-                                }
-                            }
-                            finally
-                            {
-                                Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.IsUIenabled = true));
-                                Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.StatusBarTxt = "Loaded snapshot files from directory"));
-                            }
-                        });
-                    }
+                    MessageBox.Show("Unable to find valid FFXV snapshot files in the selected folder", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
-                catch (Exception ex)
+                else
                 {
-                    MessageBox.Show($"{ex}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    AppViewModelInstance.IsUIenabled = true;
+                    AppViewModelInstance.StatusBarTxt = "Loading snapshot files....";
+                    AppViewModelInstance.IsUIenabled = false;
+                    SnapshotListBoxComp = (ListBox)FindName("SnapshotListbox");
+
+                    Task.Run(() =>
+                    {
+                        try
+                        {
+                            SnapshotListBoxComp.BeginInvoke(new Action(() => SnapshotListBoxComp.Items.Clear()));
+                            SnapshotFilesInDirDict.Clear();
+
+                            foreach (var ssFile in snapshotDir)
+                            {
+                                var ssFileName = Path.GetFileName(ssFile);
+                                SnapshotFilesInDirDict.Add(ssFileName, ssFile);
+                                SnapshotListBoxComp.BeginInvoke(new Action(() => SnapshotListBoxComp.Items.Add(ssFileName)));
+                            }
+
+                            Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.StatusBarTxt = "Loaded snapshot files from directory"));
+                        }
+                        catch (Exception ex)
+                        {
+                            Dispatcher.Invoke(new Action(() => MessageBox.Show($"{ex}", "Error", MessageBoxButton.OK, MessageBoxImage.Error)));
+                            Dispatcher.Invoke(new Action(() => AppViewModelInstance.StatusBarTxt = "Failed to load snapshot files"));
+                        }
+                        finally
+                        {
+                            Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.IsUIenabled = true));
+                        }
+                    });
                 }
             }
         }
@@ -157,30 +155,35 @@ namespace EbonySnapsManager
 
                 if (snapshotsSaveDirSelect.ShowDialog() == true)
                 {
-                    try
-                    {
-                        AppViewModelInstance.StatusBarTxt = "Saving snapshot files....";
-                        AppViewModelInstance.IsUIenabled = false;
+                    AppViewModelInstance.IsUIenabled = false;
 
-                        Task.Run(() =>
-                        {
-                            try
-                            {
-                                SnapshotProcesses.SaveSnapshotsInList(SnapshotFilesInDirDict, snapshotsSaveDirSelect.SelectedPath);
-                            }
-                            finally
-                            {
-                                Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.IsUIenabled = true));
-                                Dispatcher.Invoke(new Action(() => MessageBox.Show("Finished saving all snapshot files from directory", "Success", MessageBoxButton.OK, MessageBoxImage.Information)));
-                                Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.StatusBarTxt = "Saved all snapshot files from directory"));
-                            }
-                        });
-                    }
-                    catch (Exception ex)
+                    Task.Run(() =>
                     {
-                        MessageBox.Show($"{ex}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                        AppViewModelInstance.IsUIenabled = true;
-                    }
+                        try
+                        {
+                            Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.StatusBarTxt = "Saving snapshot files...."));
+
+                            foreach (var ssFile in SnapshotFilesInDirDict.Values)
+                            {
+                                if (File.Exists(ssFile))
+                                {
+                                    _ = SnapshotHelpers.SaveImgDataToFile(ssFile, snapshotsSaveDirSelect.SelectedPath, SnapshotHelpers.GetImgDataFromSnapshotFile(ssFile));
+                                }
+                            }
+
+                            Dispatcher.Invoke(new Action(() => MessageBox.Show("Finished saving all snapshot files from directory", "Success", MessageBoxButton.OK, MessageBoxImage.Information)));
+                            Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.StatusBarTxt = "Saved all snapshot files from directory"));
+                        }
+                        catch (Exception ex)
+                        {
+                            Dispatcher.Invoke(new Action(() => MessageBox.Show($"{ex}", "Error", MessageBoxButton.OK, MessageBoxImage.Error)));
+                            Dispatcher.Invoke(new Action(() => AppViewModelInstance.StatusBarTxt = "Failed to save snapshot files"));
+                        }
+                        finally
+                        {
+                            Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.IsUIenabled = true));
+                        }
+                    });
                 }
             }
         }
@@ -326,33 +329,31 @@ namespace EbonySnapsManager
 
                     if (snapshotDirSelect.ShowDialog() == true)
                     {
-                        try
-                        {
-                            AppViewModelInstance.IsUIenabled = false;
+                        AppViewModelInstance.IsUIenabled = false;
 
-                            Task.Run(() =>
+                        Task.Run(() =>
+                        {
+                            try
                             {
-                                try
-                                {
-                                    Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.StatusBarTxt = "Updating save file...."));
-                                    SavedataProcesses.RemoveBlankSnapsInSave(saveFileSelect.FileName, snapshotDirSelect.SelectedPath);
+                                Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.StatusBarTxt = "Updating save file...."));
+                                SavedataProcesses.RemoveBlankSnapsInSave(saveFileSelect.FileName, snapshotDirSelect.SelectedPath);
 
-                                    Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.StatusBarTxt = "Updating snapshotlink file...."));
-                                    SnapshotProcesses.RemoveBlankSnapsInlink(snapshotlinkFileSelect.FileName, snapshotDirSelect.SelectedPath);
-                                }
-                                finally
-                                {
-                                    Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.IsUIenabled = true));
-                                    Dispatcher.Invoke(new Action(() => MessageBox.Show("Finished removing blank snaps", "Success", MessageBoxButton.OK, MessageBoxImage.Information)));
-                                    Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.StatusBarTxt = "Removed blank snaps"));
-                                }
-                            });
-                        }
-                        catch (Exception ex)
-                        {
-                            MessageBox.Show($"{ex}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                            AppViewModelInstance.IsUIenabled = true;
-                        }
+                                Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.StatusBarTxt = "Updating snapshotlink file...."));
+                                SnapshotProcesses.RemoveBlankSnapsInlink(snapshotlinkFileSelect.FileName, snapshotDirSelect.SelectedPath);
+
+                                Dispatcher.Invoke(new Action(() => MessageBox.Show("Finished removing blank snaps", "Success", MessageBoxButton.OK, MessageBoxImage.Information)));
+                                Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.StatusBarTxt = "Removed blank snaps"));
+                            }
+                            catch (Exception ex)
+                            {
+                                Dispatcher.Invoke(new Action(() => MessageBox.Show($"{ex}", "Error", MessageBoxButton.OK, MessageBoxImage.Error)));
+                                Dispatcher.Invoke(new Action(() => AppViewModelInstance.StatusBarTxt = "Failed to remove blank snaps"));
+                            }
+                            finally
+                            {
+                                Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.IsUIenabled = true));
+                            }
+                        });
                     }
                 }
             }
