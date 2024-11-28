@@ -79,10 +79,7 @@
                             <TextBlock x:Name="SaveSnapshotsInListBtnTxtBlock" Text="Save all Snapshot(s) on list"/>
                         </Button>
                     </Grid>
-                    
-                    <StackPanel x:Name="BatchPanel" Grid.Row="3" Grid.Column="6">
-                    </StackPanel>
-                    
+                                        
                     <TextBlock x:Name="SnapViewerImgBoxTxtBlock" Grid.Row="3" Grid.Column="3" FontSize="15" VerticalAlignment="Center" HorizontalAlignment="Center">Image Panel</TextBlock>
 
                     <Image x:Name="SnapViewerImgBox" Grid.Row="3" Grid.Column="2" Grid.RowSpan="1" Grid.ColumnSpan="3" Source="{Binding BitmapSrc0}" RenderOptions.BitmapScalingMode="HighQuality" MouseDown="SnapViewerImgBox_MouseDown">
@@ -142,8 +139,8 @@
                                     <TextBlock x:Name="ImportSnapsFromSaveBtnTxtBlock" Text="Import snaps from a save"/>
                                 </Button>
 
-                                <Button x:Name="AdjustSnapshotBtn" Style="{StaticResource MahApps.Styles.Button.Square}" Margin="5,15,5,0" Click="AdjustSnapshotBtn_Click">
-                                    <TextBlock x:Name="AdjustSnapshotBtnTxtBlock" Text="Adjust snapshots"/>
+                                <Button x:Name="RemoveBlankSnapsBtn" Style="{StaticResource MahApps.Styles.Button.Square}" Margin="5,15,5,0" Click="RemoveBlankSnapsBtn_Click">
+                                    <TextBlock x:Name="RemoveBlankSnapsBtnTxtBlock" Text="Remove blank snaps"/>
                                 </Button>
                                 
                             </StackPanel>

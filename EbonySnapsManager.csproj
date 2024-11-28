@@ -97,12 +97,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Crypto\CryptoVariables.cs" />
+    <Compile Include="Crypto\Decrypt.cs" />
+    <Compile Include="Crypto\Encrypt.cs" />
+    <Compile Include="Crypto\MersenneTwister.cs" />
+    <Compile Include="Crypto\SharedCryptoFunctions.cs" />
+    <Compile Include="Extensions\BinaryReaderHelpers.cs" />
     <Compile Include="ImgFullScreenForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ImgFullScreenForm.Designer.cs">
       <DependentUpon>ImgFullScreenForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="SaveFileHelpers.cs" />
     <Compile Include="SnapshotHelpers.cs" />
     <Compile Include="AppViewModel.cs" />
     <Page Include="MainWindow.xaml">
@@ -148,10 +155,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Crypto\" />
-    <Folder Include="Extensions\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Resource Include="images\app_icon.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

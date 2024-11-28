@@ -304,38 +304,63 @@ namespace EbonySnapsManager
         }
 
 
-        private void AdjustSnapshotBtn_Click(object sender, RoutedEventArgs e)
+        private void RemoveBlankSnapsBtn_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Function not implemented");
+            var saveFileSelect = new OpenFileDialog()
+            {
+                Title = "Select a FFXV save file",
+                Filter = "FFXV save file (gameplay0.save)|gameplay0.save"
+            };
 
-            //var saveFileSelect = new OpenFileDialog()
-            //{
-            //    Title = "Select a FFXV save file",
-            //    Filter = "FFXV save file (gameplay0.save)|gameplay0.save"
-            //};
+            if (saveFileSelect.ShowDialog() == true)
+            {
+                var snapshotlinkFileSelect = new OpenFileDialog()
+                {
+                    Title = "Select a snapshotlink file",
+                    Filter = "snapshotlink file (snapshotlink.sl)|snapshotlink.sl"
+                };
 
-            //if (saveFileSelect.ShowDialog() == true)
-            //{
-            //    var snapshotlinkFileSelect = new OpenFileDialog()
-            //    {
-            //        Title = "Select a snapshotlink file",
-            //        Filter = "snapshotlink file (snapshotlink.sl)|snapshotlink.sl"
-            //    };
+                if (snapshotlinkFileSelect.ShowDialog() == true)
+                {
+                    var snapshotDirSelect = new VistaFolderBrowserDialog()
+                    {
+                        Description = "Select a FFXV snapshot directory",
+                        UseDescriptionForTitle = true
+                    };
 
-            //    if (snapshotlinkFileSelect.ShowDialog() == true)
-            //    {
-            //        var snapshotDirSelect = new VistaFolderBrowserDialog()
-            //        {
-            //            Description = "Select a FFXV snapshot directory",
-            //            UseDescriptionForTitle = true
-            //        };
+                    if (snapshotDirSelect.ShowDialog() == true)
+                    {
+                        try
+                        {
+                            AppViewModelInstance.IsUIenabled = false;
 
-            //        if (snapshotDirSelect.ShowDialog() == true)
-            //        {
+                            System.Threading.Tasks.Task.Run(() =>
+                            {
+                                try
+                                {
+                                    Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.StatusBarTxt = "Updating save file...."));
+                                    SaveFileHelpers.RemoveBlankSnapsSaveProcess(saveFileSelect.FileName, snapshotDirSelect.SelectedPath);
 
-            //        }
-            //    }
-            //}
+                                    Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.StatusBarTxt = "Updating snapshotlink file...."));
+                                    SnapshotHelpers.RemoveBlankSnapslinkProcess(snapshotlinkFileSelect.FileName, snapshotDirSelect.SelectedPath);
+                                }
+                                finally
+                                {
+                                    Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.IsUIenabled = true));
+                                    MessageBox.Show("Finished removing blank snaps", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                                    Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.StatusBarTxt = "Removed blank snaps"));
+                                }
+                            });
+
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show($"{ex}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                            AppViewModelInstance.IsUIenabled = true;
+                        }
+                    }
+                }
+            }
         }
 
 
