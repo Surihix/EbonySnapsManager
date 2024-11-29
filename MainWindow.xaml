@@ -119,7 +119,7 @@
 
                     <StackPanel x:Name="SnapToolsTabStackPanel" Grid.Row="3" Grid.Column="6" VerticalAlignment="Center" IsEnabled="{Binding IsUIenabled}">
 
-                        <Button x:Name="AddNewSnapshotBtn" Style="{StaticResource MahApps.Styles.Button.Square}" Margin="0,10,0,0" Click="AddNewSnapshotBtn_Click">
+                        <Button x:Name="AddNewSnapshotBtn" Style="{StaticResource MahApps.Styles.Button.Square}" Margin="0,0,0,0" Click="AddNewSnapshotBtn_Click">
                             <TextBlock x:Name="AddNewSnapshotBtnTxtBlock" Text="Add as new snap"/>
                         </Button>
 
@@ -127,24 +127,13 @@
                             <TextBlock x:Name="ReplaceSnapshotBtnTxtBlock" Text="Replace a snap"/>
                         </Button>
 
-                        <GroupBox x:Name="SnapshotToolsGrpBox" Style="{DynamicResource MahApps.Styles.Clean}" Header="Snapshot Control :"
-                                  mah:ControlsHelper.ContentCharacterCasing="Normal" Margin="0,30,0,0">
-                            <GroupBox.Resources>
-                                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Clean/Controls.xaml" />
-                            </GroupBox.Resources>
+                        <Button x:Name="AddMultipleNewSnapsBtn" Style="{StaticResource MahApps.Styles.Button.Square}" Margin="0,30,0,0" Click="AddMultipleNewSnapsBtn_Click">
+                            <TextBlock x:Name="AddMultipleNewSnapsBtnTxtBlock" Text="Add multiple new snaps"/>
+                        </Button>
 
-                            <StackPanel x:Name="SnapshotToolsGrpBoxStackPanel" Margin="0,0,0,15">
-
-                                <Button x:Name="ImportSnapsFromSaveBtn" Style="{StaticResource MahApps.Styles.Button.Square}" Margin="5,20,5,0" Click="ImportSnapsFromSaveBtn_Click">
-                                    <TextBlock x:Name="ImportSnapsFromSaveBtnTxtBlock" Text="Import snaps from a save"/>
-                                </Button>
-
-                                <Button x:Name="RemoveBlankSnapsBtn" Style="{StaticResource MahApps.Styles.Button.Square}" Margin="5,15,5,0" Click="RemoveBlankSnapsBtn_Click">
-                                    <TextBlock x:Name="RemoveBlankSnapsBtnTxtBlock" Text="Remove blank snaps"/>
-                                </Button>
-                                
-                            </StackPanel>
-                        </GroupBox>
+                        <Button x:Name="RemoveBlankSnapsBtn" Style="{StaticResource MahApps.Styles.Button.Square}" Margin="0,15,0,0" Click="RemoveBlankSnapsBtn_Click">
+                            <TextBlock x:Name="RemoveBlankSnapsBtnTxtBlock" Text="Remove blank snaps"/>
+                        </Button>
                     </StackPanel>
 
                     <TextBlock x:Name="SnapToolsImgBoxTxtBlock" Grid.Row="3" Grid.Column="3" FontSize="15" VerticalAlignment="Center" HorizontalAlignment="Center">Image Panel</TextBlock>

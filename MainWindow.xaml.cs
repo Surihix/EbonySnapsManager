@@ -309,29 +309,10 @@ namespace EbonySnapsManager
         }
 
 
-        private void ImportSnapsFromSaveBtn_Click(object sender, RoutedEventArgs e)
+        private void AddMultipleNewSnapsBtn_Click(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("Function not implemented");
 
-            //var saveFileSelect = new OpenFileDialog()
-            //{
-            //    Title = "Select a FFXV save file",
-            //    Filter = "gameplay0.save|gameplay0.save"
-            //};
-
-            //if (saveFileSelect.ShowDialog() == true)
-            //{
-            //    var snapshotlinkFileSelect = new OpenFileDialog()
-            //    {
-            //        Title = "Select a snapshotlink file",
-            //        Filter = "snapshotlink.sl|snapshotlink.sl"
-            //    };
-
-            //    if (snapshotlinkFileSelect.ShowDialog() == true)
-            //    {
-
-            //    }
-            //}
         }
 
 
