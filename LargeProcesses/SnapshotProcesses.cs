@@ -4,13 +4,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace EbonySnapsManager
+namespace EbonySnapsManager.LargeProcesses
 {
     internal class SnapshotProcesses
     {
-        public static void AddSnapsInLink()
+        public static void AddSnapInLink(string snapshotlinkFile, byte[] imgData, ref uint snapId)
         {
-
+            
         }
 
 

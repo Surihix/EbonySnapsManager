@@ -1,4 +1,5 @@
 ﻿using EbonySnapsManager.Helpers;
+using EbonySnapsManager.LargeProcesses;
 using MahApps.Metro.Controls;
 using Microsoft.Win32;
 using Ookii.Dialogs.Wpf;
@@ -21,8 +22,8 @@ namespace EbonySnapsManager
         private static readonly Dictionary<string, string> SnapshotFilesInDirDict = new Dictionary<string, string>();
         private readonly AppViewModel AppViewModelInstance = new AppViewModel();
 
-        public static byte[] CurrentSnapshotData = new byte[] { };
-        public static byte[] CurrentImgData = new byte[] { };
+        private static byte[] CurrentSnapshotData = new byte[] { };
+        private static byte[] CurrentImgData = new byte[] { };
 
         public static string CurrentSSName { get; set; }
         private static ListBox SnapshotListBoxComp { get; set; }
@@ -208,34 +209,59 @@ namespace EbonySnapsManager
 
         private void AddNewSnapshotBtn_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Function not implemented");
+            if (AppViewModelInstance.BitmapSrc1 == null)
+            {
+                MessageBox.Show("A valid image file is not selected. Please load an image file into the panel before using this option", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            else
+            {
+                var saveFileSelect = new OpenFileDialog()
+                {
+                    Title = "Select a FFXV save file",
+                    Filter = "FFXV save file (gameplay0.save)|gameplay0.save"
+                };
 
-            //if (AppViewModelInstance.BitmapSrc1 == null)
-            //{
-            //    MessageBox.Show("A valid image file is not selected. Please load an image file into the panel before using this option", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            //}
-            //else
-            //{
-            //    var saveFileSelect = new OpenFileDialog()
-            //    {
-            //        Title = "Select a FFXV save file",
-            //        Filter = "FFXV save file (gameplay0.save)|gameplay0.save"
-            //    };
+                if (saveFileSelect.ShowDialog() == true)
+                {
+                    var snapshotlinkFileSelect = new OpenFileDialog()
+                    {
+                        Title = "Select a snapshotlink file",
+                        Filter = "snapshotlink file (snapshotlink.sl)|snapshotlink.sl"
+                    };
 
-            //    if (saveFileSelect.ShowDialog() == true)
-            //    {
-            //        var snapshotlinkFileSelect = new OpenFileDialog()
-            //        {
-            //            Title = "Select a snapshotlink file",
-            //            Filter = "snapshotlink file (snapshotlink.sl)|snapshotlink.sl"
-            //        };
+                    if (snapshotlinkFileSelect.ShowDialog() == true)
+                    {
+                        AppViewModelInstance.IsUIenabled = false;
 
-            //        if (snapshotlinkFileSelect.ShowDialog() == true)
-            //        {
+                        Task.Run(() =>
+                        {
+                            try
+                            {
+                                var snapId = uint.MinValue;
 
-            //        }
-            //    }
-            //}
+                                Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.StatusBarTxt = "Updating snapshotlink file...."));
+                                SnapshotProcesses.AddSnapInLink(snapshotlinkFileSelect.FileName, CurrentImgData, ref snapId);
+                                //Dispatcher.Invoke(new Action(() => MessageBox.Show($"Snap Id: {snapId}", "Success", MessageBoxButton.OK, MessageBoxImage.Information)));
+
+                                Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.StatusBarTxt = "Updating save file...."));
+                                SavedataProcesses.AddSnapInSave(saveFileSelect.FileName, snapId);
+
+                                Dispatcher.Invoke(new Action(() => MessageBox.Show("Finished adding new snap", "Success", MessageBoxButton.OK, MessageBoxImage.Information)));
+                                Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.StatusBarTxt = "Added new snap"));
+                            }
+                            catch (Exception ex)
+                            {
+                                Dispatcher.Invoke(new Action(() => MessageBox.Show($"{ex}", "Error", MessageBoxButton.OK, MessageBoxImage.Error)));
+                                Dispatcher.Invoke(new Action(() => AppViewModelInstance.StatusBarTxt = "Failed to add new snap"));
+                            }
+                            finally
+                            {
+                                Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.IsUIenabled = true));
+                            }
+                        });
+                    }
+                }
+            }
         }
 
 

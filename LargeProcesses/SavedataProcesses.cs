@@ -5,10 +5,16 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace EbonySnapsManager
+namespace EbonySnapsManager.LargeProcesses
 {
     internal class SavedataProcesses
     {
+        public static void AddSnapInSave(string saveFile, uint snapId)
+        {
+
+        }
+
+
         private static readonly byte[] SnapSubStructId = new byte[] { 0xE1, 0xC1, 0x1F, 0xEE, 0x93, 0xDF, 0xB2, 0xB6 };
         public static void RemoveBlankSnapsInSave(string saveFile, string snapshotDir)
         {

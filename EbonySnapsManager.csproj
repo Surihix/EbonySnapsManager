@@ -110,11 +110,11 @@
     <Compile Include="ImgFullScreenForm.Designer.cs">
       <DependentUpon>ImgFullScreenForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="SavedataProcesses.cs" />
+    <Compile Include="LargeProcesses\SavedataProcesses.cs" />
     <Compile Include="Helpers\SavedataHelpers.cs" />
     <Compile Include="Helpers\SnapshotHelpers.cs" />
     <Compile Include="AppViewModel.cs" />
-    <Compile Include="SnapshotProcesses.cs" />
+    <Compile Include="LargeProcesses\SnapshotProcesses.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
