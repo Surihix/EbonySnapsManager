@@ -215,50 +215,68 @@ namespace EbonySnapsManager
             }
             else
             {
-                var saveFileSelect = new OpenFileDialog()
+                var snapshotlinkFileSelect = new OpenFileDialog()
                 {
-                    Title = "Select a FFXV save file",
-                    Filter = "FFXV save file (gameplay0.save)|gameplay0.save"
+                    Title = "Select a snapshotlink file",
+                    Filter = "snapshotlink.sl|snapshotlink.sl"
                 };
 
-                if (saveFileSelect.ShowDialog() == true)
+                if (snapshotlinkFileSelect.ShowDialog() == true)
                 {
-                    var snapshotlinkFileSelect = new OpenFileDialog()
+                    var snapshotDirSelect = new VistaFolderBrowserDialog()
                     {
-                        Title = "Select a snapshotlink file",
-                        Filter = "snapshotlink file (snapshotlink.sl)|snapshotlink.sl"
+                        Description = "Select a FFXV snapshot directory",
+                        UseDescriptionForTitle = true
                     };
 
-                    if (snapshotlinkFileSelect.ShowDialog() == true)
+                    if (snapshotDirSelect.ShowDialog() == true)
                     {
-                        AppViewModelInstance.IsUIenabled = false;
-
-                        Task.Run(() =>
+                        var saveFileSelect = new OpenFileDialog()
                         {
-                            try
-                            {
-                                var snapId = uint.MinValue;
+                            Title = "Select a FFXV save file",
+                            Filter = "gameplay0.save|gameplay0.save"
+                        };
 
-                                Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.StatusBarTxt = "Updating snapshotlink file...."));
-                                SnapshotProcesses.AddSnapInLink(snapshotlinkFileSelect.FileName, CurrentImgData, ref snapId);
-                                //Dispatcher.Invoke(new Action(() => MessageBox.Show($"Snap Id: {snapId}", "Success", MessageBoxButton.OK, MessageBoxImage.Information)));
+                        if (saveFileSelect.ShowDialog() == true)
+                        {
+                            AppViewModelInstance.IsUIenabled = false;
 
-                                Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.StatusBarTxt = "Updating save file...."));
-                                SavedataProcesses.AddSnapInSave(saveFileSelect.FileName, snapId);
+                            Task.Run(() =>
+                            {
+                                try
+                                {
+                                    var snapId = uint.MinValue;
 
-                                Dispatcher.Invoke(new Action(() => MessageBox.Show("Finished adding new snap", "Success", MessageBoxButton.OK, MessageBoxImage.Information)));
-                                Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.StatusBarTxt = "Added new snap"));
-                            }
-                            catch (Exception ex)
-                            {
-                                Dispatcher.Invoke(new Action(() => MessageBox.Show($"{ex}", "Error", MessageBoxButton.OK, MessageBoxImage.Error)));
-                                Dispatcher.Invoke(new Action(() => AppViewModelInstance.StatusBarTxt = "Failed to add new snap"));
-                            }
-                            finally
-                            {
-                                Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.IsUIenabled = true));
-                            }
-                        });
+                                    Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.StatusBarTxt = "Updating snapshotlink file...."));
+                                    SnapshotProcesses.AddSnapInLink(snapshotlinkFileSelect.FileName, ref snapId);
+
+                                    Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.StatusBarTxt = "Updating save file...."));
+                                    SavedataProcesses.AddSnapInSave(saveFileSelect.FileName, snapId);
+
+                                    Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.StatusBarTxt = "Creating new snapshot file...."));
+                                    var newSnapshotFile = Path.Combine(snapshotDirSelect.SelectedPath, Convert.ToString(snapId).PadLeft(8, '0')) + ".ss";
+
+                                    if (File.Exists(newSnapshotFile))
+                                    {
+                                        File.Delete(newSnapshotFile);
+                                    }
+
+                                    SnapshotHelpers.CreateSnapshotFile(newSnapshotFile, CurrentImgData);
+
+                                    Dispatcher.Invoke(new Action(() => MessageBox.Show("Finished adding new snap", "Success", MessageBoxButton.OK, MessageBoxImage.Information)));
+                                    Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.StatusBarTxt = "Added new snap"));
+                                }
+                                catch (Exception ex)
+                                {
+                                    Dispatcher.Invoke(new Action(() => MessageBox.Show($"{ex}", "Error", MessageBoxButton.OK, MessageBoxImage.Error)));
+                                    Dispatcher.Invoke(new Action(() => AppViewModelInstance.StatusBarTxt = "Failed to add new snap"));
+                                }
+                                finally
+                                {
+                                    Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.IsUIenabled = true));
+                                }
+                            });
+                        }
                     }
                 }
             }
@@ -281,18 +299,6 @@ namespace EbonySnapsManager
 
                 if (snapshotFileSelect.ShowDialog() == true)
                 {
-                    var backupAllowed = MessageBox.Show("Would you like to backup the snapshot file that you are replacing?", "Backup", MessageBoxButton.YesNo, MessageBoxImage.Question);
-
-                    if (backupAllowed == MessageBoxResult.Yes)
-                    {
-                        if (File.Exists(snapshotFileSelect.FileName + ".bak"))
-                        {
-                            File.Delete(snapshotFileSelect.FileName + ".bak");
-                        }
-
-                        File.Move(snapshotFileSelect.FileName, snapshotFileSelect.FileName + ".bak");
-                    }
-
                     SnapshotHelpers.CreateSnapshotFile(snapshotFileSelect.FileName, CurrentImgData);
 
                     MessageBox.Show($"Replaced image data in \"{Path.GetFileName(snapshotFileSelect.FileName)}\"", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -310,7 +316,7 @@ namespace EbonySnapsManager
             //var saveFileSelect = new OpenFileDialog()
             //{
             //    Title = "Select a FFXV save file",
-            //    Filter = "FFXV save file (gameplay0.save)|gameplay0.save"
+            //    Filter = "gameplay0.save|gameplay0.save"
             //};
 
             //if (saveFileSelect.ShowDialog() == true)
@@ -318,7 +324,7 @@ namespace EbonySnapsManager
             //    var snapshotlinkFileSelect = new OpenFileDialog()
             //    {
             //        Title = "Select a snapshotlink file",
-            //        Filter = "snapshotlink file (snapshotlink.sl)|snapshotlink.sl"
+            //        Filter = "snapshotlink.sl|snapshotlink.sl"
             //    };
 
             //    if (snapshotlinkFileSelect.ShowDialog() == true)
@@ -334,7 +340,7 @@ namespace EbonySnapsManager
             var saveFileSelect = new OpenFileDialog()
             {
                 Title = "Select a FFXV save file",
-                Filter = "FFXV save file (gameplay0.save)|gameplay0.save"
+                Filter = "gameplay0.save|gameplay0.save"
             };
 
             if (saveFileSelect.ShowDialog() == true)
@@ -342,7 +348,7 @@ namespace EbonySnapsManager
                 var snapshotlinkFileSelect = new OpenFileDialog()
                 {
                     Title = "Select a snapshotlink file",
-                    Filter = "snapshotlink file (snapshotlink.sl)|snapshotlink.sl"
+                    Filter = "snapshotlink.sl|snapshotlink.sl"
                 };
 
                 if (snapshotlinkFileSelect.ShowDialog() == true)
