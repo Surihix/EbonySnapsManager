@@ -34,12 +34,12 @@
             // 
             // ImgPicBox
             // 
-            this.ImgPicBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
+            this.ImgPicBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(37)))), ((int)(((byte)(37)))));
             this.ImgPicBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ImgPicBox.Location = new System.Drawing.Point(0, 0);
             this.ImgPicBox.Name = "ImgPicBox";
             this.ImgPicBox.Size = new System.Drawing.Size(800, 450);
-            this.ImgPicBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.ImgPicBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.ImgPicBox.TabIndex = 0;
             this.ImgPicBox.TabStop = false;
             this.ImgPicBox.DoubleClick += new System.EventHandler(this.ImgPicBox_DoubleClick);
@@ -48,6 +48,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.ImgPicBox);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
