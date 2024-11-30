@@ -251,7 +251,7 @@ namespace EbonySnapsManager
                                     SnapshotProcesses.AddSnapInLink(snapshotlinkFileSelect.FileName, ref snapId);
 
                                     Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.StatusBarTxt = "Updating save file...."));
-                                    SavedataProcesses.AddSnapInSave(saveFileSelect.FileName, snapId);
+                                    SavedataProcesses.AddSnapInSave(saveFileSelect.FileName, snapId, 1);
 
                                     Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.StatusBarTxt = "Creating new snapshot file...."));
                                     var newSnapshotFile = Path.Combine(snapshotDirSelect.SelectedPath, Convert.ToString(snapId).PadLeft(8, '0')) + ".ss";
@@ -311,8 +311,93 @@ namespace EbonySnapsManager
 
         private void AddMultipleNewSnapsBtn_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Function not implemented");
+            var imgDir = new VistaFolderBrowserDialog()
+            {
+                Description = "Select a directory containig image(s)",
+                UseDescriptionForTitle = true
+            };
 
+            if (imgDir.ShowDialog() == true)
+            {
+                var imgDirFiles = Directory.GetFiles(imgDir.SelectedPath, "*.jpg", SearchOption.TopDirectoryOnly);
+
+                if (imgDirFiles.Length == 0)
+                {
+                    MessageBox.Show("Unable to find valid image files in the selected folder", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                else
+                {
+                    var snapshotlinkFileSelect = new OpenFileDialog()
+                    {
+                        Title = "Select a snapshotlink file",
+                        Filter = "snapshotlink.sl|snapshotlink.sl"
+                    };
+
+                    if (snapshotlinkFileSelect.ShowDialog() == true)
+                    {
+                        var snapshotDirSelect = new VistaFolderBrowserDialog()
+                        {
+                            Description = "Select a FFXV snapshot directory",
+                            UseDescriptionForTitle = true
+                        };
+
+                        if (snapshotDirSelect.ShowDialog() == true)
+                        {
+                            var saveFileSelect = new OpenFileDialog()
+                            {
+                                Title = "Select a FFXV save file",
+                                Filter = "gameplay0.save|gameplay0.save"
+                            };
+
+                            if (saveFileSelect.ShowDialog() == true)
+                            {
+                                AppViewModelInstance.IsUIenabled = false;
+
+                                Task.Run(() =>
+                                {
+                                    try
+                                    {
+                                        var snapId = uint.MinValue;
+
+                                        Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.StatusBarTxt = "Updating snapshotlink file...."));
+                                        SnapshotProcesses.AddSnapInLink(snapshotlinkFileSelect.FileName, ref snapId);
+
+                                        Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.StatusBarTxt = "Updating save file...."));
+                                        SavedataProcesses.AddSnapInSave(saveFileSelect.FileName, snapId, imgDirFiles.Length);
+
+                                        Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.StatusBarTxt = "Creating new snapshot file(s)...."));
+                                        
+                                        foreach (var imgFile in imgDirFiles)
+                                        {
+                                            var newSnapshotFile = Path.Combine(snapshotDirSelect.SelectedPath, Convert.ToString(snapId).PadLeft(8, '0')) + ".ss";
+
+                                            if (File.Exists(newSnapshotFile))
+                                            {
+                                                File.Delete(newSnapshotFile);
+                                            }
+
+                                            SnapshotHelpers.CreateSnapshotFile(newSnapshotFile, File.ReadAllBytes(imgFile));
+                                            snapId++;
+                                        }
+
+                                        Dispatcher.Invoke(new Action(() => MessageBox.Show("Finished adding new snap(s)", "Success", MessageBoxButton.OK, MessageBoxImage.Information)));
+                                        Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.StatusBarTxt = "Added new snap(s)"));
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Dispatcher.Invoke(new Action(() => MessageBox.Show($"{ex}", "Error", MessageBoxButton.OK, MessageBoxImage.Error)));
+                                        Dispatcher.Invoke(new Action(() => AppViewModelInstance.StatusBarTxt = "Failed to add new snap"));
+                                    }
+                                    finally
+                                    {
+                                        Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.IsUIenabled = true));
+                                    }
+                                });
+                            }
+                        }
+                    }
+                }
+            }
         }
 
 
