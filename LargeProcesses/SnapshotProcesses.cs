@@ -10,7 +10,7 @@ namespace EbonySnapsManager.LargeProcesses
     {
         private static readonly byte[] ShotStructId = new byte[] { 0xA1, 0x1C, 0xFC, 0x58, 0x08, 0x02, 0x47, 0x2E };
 
-        public static void AddSnapInLink(string snapshotlinkFile, ref uint newShotId)
+        public static void AddSnapsInLink(string snapshotlinkFile, ref uint newShotId)
         {
             var decLinkData = Decrypt.BeginDecryption(File.ReadAllBytes(snapshotlinkFile));
 

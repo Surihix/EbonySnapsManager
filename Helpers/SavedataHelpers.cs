@@ -62,6 +62,7 @@ namespace EbonySnapsManager.Helpers
 
         private static byte[] HeaderData = new byte[12];
         private static byte[] DataTillSnapStruct { get; set; }
+
         public static void InitialDataOperations(byte[] decSaveData, long locatedStructOffset)
         {
             Array.Copy(decSaveData, HeaderData, HeaderData.Length);
@@ -71,13 +72,14 @@ namespace EbonySnapsManager.Helpers
         }
 
 
-        private static byte[] StructId { get; set; }
+        private static byte[] StructId = new byte[8];
         public static uint SnapId { get; set; }
         private static uint AttributeFieldsCount { get; set; }
         private static byte[] AttributeFieldData { get; set; }
         private static ulong SnapTime { get; set; }
-        private static byte[] RemainingData { get; set; }
+        private static byte[] RemainingData = new byte[59];
         private static ulong NewSnapTime { get; set; }
+
         public static void ReadSnapRecordDataInSave(BinaryReader saveDataReader, bool isAddingSnap)
         {
             StructId = saveDataReader.ReadBytes(8);
@@ -100,9 +102,10 @@ namespace EbonySnapsManager.Helpers
         }
 
 
-        public static uint UpdatedSnapDataSize { get; set; }
-        public static uint UpdatedSnapCount { get; set; }
+        private static uint UpdatedSnapDataSize { get; set; }
+        private static uint UpdatedSnapCount { get; set; }
         private static int DictIndex { get; set; }
+
         public static void PackSnapDataRecordToDict(Dictionary<int, byte[]> snapDataDict)
         {
             var currentSnapRecordData = new List<byte>();
@@ -122,9 +125,10 @@ namespace EbonySnapsManager.Helpers
         }
 
 
-        private static byte[] DataTillFooterOffset = new byte[] { };
-        private static byte[] FooterData = new byte[] { };
-        private static byte[] EncFooterData = new byte[] { };
+        private static byte[] DataTillFooterOffset { get; set; }
+        private static byte[] FooterData { get; set; }
+        private static byte[] EncFooterData = new byte[53];
+
         public static void FooterOperations(BinaryReader saveDataReader, int footerOffset)
         {
             var currentPos = (int)saveDataReader.BaseStream.Position;
@@ -220,6 +224,29 @@ namespace EbonySnapsManager.Helpers
             }
 
             return updatedSaveData;
+        }
+
+
+        public static void ResetVariables()
+        {
+            Array.Clear(HeaderData, 0, HeaderData.Length);
+            DataTillSnapStruct = null;
+
+            Array.Clear(StructId, 0, StructId.Length);
+            SnapId = 0;
+            AttributeFieldsCount = 0;
+            AttributeFieldData = null;
+            SnapTime = 0;
+            Array.Clear(RemainingData, 0, RemainingData.Length);
+            NewSnapTime = 0;
+
+            UpdatedSnapDataSize = 0;
+            UpdatedSnapCount = 0;
+            DictIndex = 0;
+
+            DataTillFooterOffset = null;
+            FooterData = null;
+            Array.Clear(EncFooterData, 0, EncFooterData.Length);
         }
     }
 }

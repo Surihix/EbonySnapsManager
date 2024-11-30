@@ -248,10 +248,10 @@ namespace EbonySnapsManager
                                     var snapId = uint.MinValue;
 
                                     Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.StatusBarTxt = "Updating snapshotlink file...."));
-                                    SnapshotProcesses.AddSnapInLink(snapshotlinkFileSelect.FileName, ref snapId);
+                                    SnapshotProcesses.AddSnapsInLink(snapshotlinkFileSelect.FileName, ref snapId);
 
                                     Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.StatusBarTxt = "Updating save file...."));
-                                    SavedataProcesses.AddSnapInSave(saveFileSelect.FileName, snapId, 1);
+                                    SavedataProcesses.AddSnapsInSave(saveFileSelect.FileName, snapId, 1);
 
                                     Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.StatusBarTxt = "Creating new snapshot file...."));
                                     var newSnapshotFile = Path.Combine(snapshotDirSelect.SelectedPath, Convert.ToString(snapId).PadLeft(8, '0')) + ".ss";
@@ -360,10 +360,10 @@ namespace EbonySnapsManager
                                         var snapId = uint.MinValue;
 
                                         Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.StatusBarTxt = "Updating snapshotlink file...."));
-                                        SnapshotProcesses.AddSnapInLink(snapshotlinkFileSelect.FileName, ref snapId);
+                                        SnapshotProcesses.AddSnapsInLink(snapshotlinkFileSelect.FileName, ref snapId);
 
                                         Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.StatusBarTxt = "Updating save file...."));
-                                        SavedataProcesses.AddSnapInSave(saveFileSelect.FileName, snapId, imgDirFiles.Length);
+                                        SavedataProcesses.AddSnapsInSave(saveFileSelect.FileName, snapId, imgDirFiles.Length);
 
                                         Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.StatusBarTxt = "Creating new snapshot file(s)...."));
                                         
@@ -386,7 +386,7 @@ namespace EbonySnapsManager
                                     catch (Exception ex)
                                     {
                                         Dispatcher.Invoke(new Action(() => MessageBox.Show($"{ex}", "Error", MessageBoxButton.OK, MessageBoxImage.Error)));
-                                        Dispatcher.Invoke(new Action(() => AppViewModelInstance.StatusBarTxt = "Failed to add new snap"));
+                                        Dispatcher.Invoke(new Action(() => AppViewModelInstance.StatusBarTxt = "Failed to add new snap(s)"));
                                     }
                                     finally
                                     {

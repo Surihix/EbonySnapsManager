@@ -8,7 +8,7 @@ namespace EbonySnapsManager.LargeProcesses
 {
     internal class SavedataProcesses
     {
-        public static void AddSnapInSave(string saveFile, uint newSnapId, int snapsToAdd)
+        public static void AddSnapsInSave(string saveFile, uint newSnapId, int snapsToAdd)
         {
             var decSaveData = Decrypt.BeginDecryption(File.ReadAllBytes(saveFile));
             var locatedStructOffset = SavedataHelpers.LocateOffset(decSaveData);
@@ -37,9 +37,10 @@ namespace EbonySnapsManager.LargeProcesses
             SavedataHelpers.AddNewSnapDataToDict(snapsToAdd, newSnapId, snapDataDict);
 
             var updatedSaveData = SavedataHelpers.BuildUpdatedFileData(snapDataDict);
+            SavedataHelpers.ResetVariables();
+
             var outEncData = Encrypt.BeginEncryption(updatedSaveData);
             File.Delete(saveFile);
-
             File.WriteAllBytes(saveFile, outEncData);
         }
 
@@ -75,9 +76,10 @@ namespace EbonySnapsManager.LargeProcesses
             }
 
             var updatedSaveData = SavedataHelpers.BuildUpdatedFileData(snapDataDict);
+            SavedataHelpers.ResetVariables();
+
             var outEncData = Encrypt.BeginEncryption(updatedSaveData);
             File.Delete(saveFile);
-
             File.WriteAllBytes(saveFile, outEncData);
         }
     }
