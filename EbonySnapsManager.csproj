@@ -103,7 +103,6 @@
     <Compile Include="Crypto\MersenneTwister.cs" />
     <Compile Include="Crypto\SharedCryptoFunctions.cs" />
     <Compile Include="Extensions\BinaryReaderHelpers.cs" />
-    <Compile Include="Extensions\StreamHelpers.cs" />
     <Compile Include="ImgFullScreenForm.cs">
       <SubType>Form</SubType>
     </Compile>

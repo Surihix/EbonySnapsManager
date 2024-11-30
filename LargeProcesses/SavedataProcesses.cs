@@ -15,7 +15,7 @@ namespace EbonySnapsManager.LargeProcesses
 
             SavedataHelpers.InitialDataOperations(decSaveData, locatedStructOffset);
 
-            var snapDataDict = new Dictionary<int, byte[]>();
+            var snapEntriesDataDict = new Dictionary<int, byte[]>();
 
             using (var saveDataReader = new BinaryReader(new MemoryStream(decSaveData)))
             {
@@ -27,16 +27,16 @@ namespace EbonySnapsManager.LargeProcesses
 
                 for (int i = 0; i < snapCount; i++)
                 {
-                    SavedataHelpers.ReadSnapRecordDataInSave(saveDataReader, true);
-                    SavedataHelpers.PackSnapDataRecordToDict(snapDataDict);
+                    SavedataHelpers.ReadSnapEntryDataInSave(saveDataReader, true);
+                    SavedataHelpers.PackSnapEntryDataToDict(snapEntriesDataDict);
                 }
 
                 SavedataHelpers.FooterOperations(saveDataReader, footerOffset);
             }
 
-            SavedataHelpers.AddNewSnapDataToDict(snapsToAdd, newSnapId, snapDataDict);
+            SavedataHelpers.AddNewSnapRecordDataToDict(snapsToAdd, newSnapId, snapEntriesDataDict);
 
-            var updatedSaveData = SavedataHelpers.BuildUpdatedFileData(snapDataDict);
+            var updatedSaveData = SavedataHelpers.BuildUpdatedSaveData(snapEntriesDataDict);
             SavedataHelpers.ResetVariables();
 
             var outEncData = Encrypt.BeginEncryption(updatedSaveData);
@@ -64,18 +64,18 @@ namespace EbonySnapsManager.LargeProcesses
 
                 for (int i = 0; i < snapCount; i++)
                 {
-                    SavedataHelpers.ReadSnapRecordDataInSave(saveDataReader, false);
+                    SavedataHelpers.ReadSnapEntryDataInSave(saveDataReader, false);
 
                     if (File.Exists(Path.Combine(snapshotDir, $"{Convert.ToString(SavedataHelpers.SnapId).PadLeft(8, '0')}.ss")))
                     {
-                        SavedataHelpers.PackSnapDataRecordToDict(snapDataDict);
+                        SavedataHelpers.PackSnapEntryDataToDict(snapDataDict);
                     }
                 }
 
                 SavedataHelpers.FooterOperations(saveDataReader, footerOffset);
             }
 
-            var updatedSaveData = SavedataHelpers.BuildUpdatedFileData(snapDataDict);
+            var updatedSaveData = SavedataHelpers.BuildUpdatedSaveData(snapDataDict);
             SavedataHelpers.ResetVariables();
 
             var outEncData = Encrypt.BeginEncryption(updatedSaveData);

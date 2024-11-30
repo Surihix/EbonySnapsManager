@@ -7,8 +7,8 @@ namespace EbonySnapsManager.Helpers
 {
     internal class SavedataHelpers
     {
-        private static readonly byte[] SnapContainerStructId = new byte[] { 0x32, 0x91, 0x76, 0xEE, 0x72, 0xFF, 0xD3, 0xEB };
-        private static readonly byte[] SnapStructId = new byte[] { 0xE1, 0xC1, 0x1F, 0xEE, 0x93, 0xDF, 0xB2, 0xB6 };
+        private static readonly byte[] SnapEntriesContainerStructId = new byte[] { 0x32, 0x91, 0x76, 0xEE, 0x72, 0xFF, 0xD3, 0xEB };
+        private static readonly byte[] SnapEntryStructId = new byte[] { 0xE1, 0xC1, 0x1F, 0xEE, 0x93, 0xDF, 0xB2, 0xB6 };
 
         public static long LocateOffset(byte[] saveData)
         {
@@ -48,7 +48,7 @@ namespace EbonySnapsManager.Helpers
                     reader.BaseStream.Position = pos + i;
                     currentBytes = reader.ReadBytes(8);
 
-                    if (currentBytes.SequenceEqual(SnapContainerStructId))
+                    if (currentBytes.SequenceEqual(SnapEntriesContainerStructId))
                     {
                         locatedOffset = pos + i;
                         break;
@@ -75,23 +75,23 @@ namespace EbonySnapsManager.Helpers
         private static byte[] StructId = new byte[8];
         public static uint SnapId { get; set; }
         private static uint AttributeFieldsCount { get; set; }
-        private static byte[] AttributeFieldData { get; set; }
+        private static byte[] AttributeFieldsData { get; set; }
         private static ulong SnapTime { get; set; }
         private static byte[] RemainingData = new byte[59];
         private static ulong NewSnapTime { get; set; }
 
-        public static void ReadSnapRecordDataInSave(BinaryReader saveDataReader, bool isAddingSnap)
+        public static void ReadSnapEntryDataInSave(BinaryReader saveDataReader, bool isAddingSnap)
         {
             StructId = saveDataReader.ReadBytes(8);
 
-            if (!StructId.SequenceEqual(SnapStructId))
+            if (!StructId.SequenceEqual(SnapEntryStructId))
             {
                 throw new Exception();
             }
 
             SnapId = saveDataReader.ReadUInt32();
             AttributeFieldsCount = saveDataReader.ReadUInt32();
-            AttributeFieldData = saveDataReader.ReadBytes((int)AttributeFieldsCount * 4);
+            AttributeFieldsData = saveDataReader.ReadBytes((int)AttributeFieldsCount * 4);
             SnapTime = saveDataReader.ReadUInt64();
             RemainingData = saveDataReader.ReadBytes(59);
 
@@ -102,25 +102,25 @@ namespace EbonySnapsManager.Helpers
         }
 
 
-        private static uint UpdatedSnapDataSize { get; set; }
+        private static uint UpdatedSnapEntriesDataSize { get; set; }
         private static uint UpdatedSnapCount { get; set; }
         private static int DictIndex { get; set; }
 
-        public static void PackSnapDataRecordToDict(Dictionary<int, byte[]> snapDataDict)
+        public static void PackSnapEntryDataToDict(Dictionary<int, byte[]> snapEntriesDataDict)
         {
-            var currentSnapRecordData = new List<byte>();
+            var currentSnapEntryData = new List<byte>();
 
-            currentSnapRecordData.AddRange(SnapStructId);
-            currentSnapRecordData.AddRange(BitConverter.GetBytes(SnapId));
-            currentSnapRecordData.AddRange(BitConverter.GetBytes(AttributeFieldsCount));
-            currentSnapRecordData.AddRange(AttributeFieldData);
-            currentSnapRecordData.AddRange(BitConverter.GetBytes(SnapTime));
-            currentSnapRecordData.AddRange(RemainingData);
+            currentSnapEntryData.AddRange(SnapEntryStructId);
+            currentSnapEntryData.AddRange(BitConverter.GetBytes(SnapId));
+            currentSnapEntryData.AddRange(BitConverter.GetBytes(AttributeFieldsCount));
+            currentSnapEntryData.AddRange(AttributeFieldsData);
+            currentSnapEntryData.AddRange(BitConverter.GetBytes(SnapTime));
+            currentSnapEntryData.AddRange(RemainingData);
 
-            UpdatedSnapDataSize += (uint)currentSnapRecordData.Count();
+            UpdatedSnapEntriesDataSize += (uint)currentSnapEntryData.Count();
             UpdatedSnapCount++;
 
-            snapDataDict.Add(DictIndex, currentSnapRecordData.ToArray());
+            snapEntriesDataDict.Add(DictIndex, currentSnapEntryData.ToArray());
             DictIndex++;
         }
 
@@ -140,47 +140,47 @@ namespace EbonySnapsManager.Helpers
         }
 
 
-        public static void AddNewSnapDataToDict(int snapsToAdd, uint newSnapId, Dictionary<int, byte[]> snapDataDict)
+        public static void AddNewSnapRecordDataToDict(int snapsToAdd, uint newSnapId, Dictionary<int, byte[]> snapEntriesDataDict)
         {
             for (int i = 0; i < snapsToAdd; i++)
             {
-                var newSnapRecordData = new List<byte>();
+                var newSnapEntryData = new List<byte>();
 
-                newSnapRecordData.AddRange(SnapStructId);
-                newSnapRecordData.AddRange(BitConverter.GetBytes(newSnapId));
-                newSnapRecordData.AddRange(BitConverter.GetBytes((uint)8));
-                newSnapRecordData.AddRange(BitConverter.GetBytes((uint)16929630));
-                newSnapRecordData.AddRange(BitConverter.GetBytes((uint)16929637));
-                newSnapRecordData.AddRange(BitConverter.GetBytes((uint)16929638));
-                newSnapRecordData.AddRange(BitConverter.GetBytes((uint)17001451));
-                newSnapRecordData.AddRange(BitConverter.GetBytes((uint)17001463));
-                newSnapRecordData.AddRange(BitConverter.GetBytes((uint)17017688));
-                newSnapRecordData.AddRange(BitConverter.GetBytes((uint)17061971));
-                newSnapRecordData.AddRange(BitConverter.GetBytes((uint)17075085));
-                newSnapRecordData.AddRange(BitConverter.GetBytes(NewSnapTime));
-                newSnapRecordData.AddRange(BitConverter.GetBytes((ulong)5332261958806667265));
-                newSnapRecordData.AddRange(BitConverter.GetBytes((ulong)2305843010301418620));
-                newSnapRecordData.AddRange(BitConverter.GetBytes((ulong)8214565721402917683));
-                newSnapRecordData.AddRange(BitConverter.GetBytes((ulong)1087028557));
-                newSnapRecordData.AddRange(BitConverter.GetBytes((ulong)1072693248));
-                newSnapRecordData.AddRange(BitConverter.GetBytes((ulong)50331648));
-                newSnapRecordData.AddRange(BitConverter.GetBytes(ulong.MinValue));
-                newSnapRecordData.AddRange(BitConverter.GetBytes(ushort.MinValue));
-                newSnapRecordData.Add(0);
+                newSnapEntryData.AddRange(SnapEntryStructId);
+                newSnapEntryData.AddRange(BitConverter.GetBytes(newSnapId));
+                newSnapEntryData.AddRange(BitConverter.GetBytes((uint)8));
+                newSnapEntryData.AddRange(BitConverter.GetBytes((uint)16929630));
+                newSnapEntryData.AddRange(BitConverter.GetBytes((uint)16929637));
+                newSnapEntryData.AddRange(BitConverter.GetBytes((uint)16929638));
+                newSnapEntryData.AddRange(BitConverter.GetBytes((uint)17001451));
+                newSnapEntryData.AddRange(BitConverter.GetBytes((uint)17001463));
+                newSnapEntryData.AddRange(BitConverter.GetBytes((uint)17017688));
+                newSnapEntryData.AddRange(BitConverter.GetBytes((uint)17061971));
+                newSnapEntryData.AddRange(BitConverter.GetBytes((uint)17075085));
+                newSnapEntryData.AddRange(BitConverter.GetBytes(NewSnapTime));
+                newSnapEntryData.AddRange(BitConverter.GetBytes((ulong)5332261958806667265));
+                newSnapEntryData.AddRange(BitConverter.GetBytes((ulong)2305843010301418620));
+                newSnapEntryData.AddRange(BitConverter.GetBytes((ulong)8214565721402917683));
+                newSnapEntryData.AddRange(BitConverter.GetBytes((ulong)1087028557));
+                newSnapEntryData.AddRange(BitConverter.GetBytes((ulong)1072693248));
+                newSnapEntryData.AddRange(BitConverter.GetBytes((ulong)50331648));
+                newSnapEntryData.AddRange(BitConverter.GetBytes(ulong.MinValue));
+                newSnapEntryData.AddRange(BitConverter.GetBytes(ushort.MinValue));
+                newSnapEntryData.Add(0);
 
-                snapDataDict.Add(DictIndex, newSnapRecordData.ToArray());
+                snapEntriesDataDict.Add(DictIndex, newSnapEntryData.ToArray());
 
                 newSnapId++;
                 NewSnapTime += 4;
 
-                UpdatedSnapDataSize += 115;
+                UpdatedSnapEntriesDataSize += 115;
                 UpdatedSnapCount++;
                 DictIndex++;
             }
         }
 
 
-        public static byte[] BuildUpdatedFileData(Dictionary<int, byte[]> snapDataDict)
+        public static byte[] BuildUpdatedSaveData(Dictionary<int, byte[]> snapEntriesDataDict)
         {
             var updatedSaveData = new byte[] { };
 
@@ -189,14 +189,14 @@ namespace EbonySnapsManager.Helpers
                 using (var updatedSaveDataWriter = new BinaryWriter(updatedSaveDataStream))
                 {
                     updatedSaveDataWriter.Write(HeaderData);
-                    updatedSaveDataWriter.Write((uint)(16 + DataTillSnapStruct.Length + 12 + UpdatedSnapDataSize + DataTillFooterOffset.Length));
+                    updatedSaveDataWriter.Write((uint)(16 + DataTillSnapStruct.Length + 12 + UpdatedSnapEntriesDataSize + DataTillFooterOffset.Length));
                     updatedSaveDataWriter.Write(DataTillSnapStruct);
-                    updatedSaveDataWriter.Write(SnapContainerStructId);
+                    updatedSaveDataWriter.Write(SnapEntriesContainerStructId);
                     updatedSaveDataWriter.Write(UpdatedSnapCount);
 
-                    foreach (var snapData in snapDataDict.Values)
+                    foreach (var snapEntryData in snapEntriesDataDict.Values)
                     {
-                        updatedSaveDataWriter.Write(snapData);
+                        updatedSaveDataWriter.Write(snapEntryData);
                     }
 
                     updatedSaveDataWriter.Write(DataTillFooterOffset);
@@ -213,7 +213,10 @@ namespace EbonySnapsManager.Helpers
                         var newSize = currentPos + increaseByteAmount;
                         var padNulls = newSize - currentPos;
 
-                        updatedSaveDataWriter.BaseStream.PadNull((int)padNulls);
+                        for (int p = 0; p < padNulls; p++)
+                        {
+                            updatedSaveDataWriter.BaseStream.WriteByte(0);
+                        }
                     }
 
                     updatedSaveDataWriter.Write(EncFooterData);
@@ -235,12 +238,12 @@ namespace EbonySnapsManager.Helpers
             Array.Clear(StructId, 0, StructId.Length);
             SnapId = 0;
             AttributeFieldsCount = 0;
-            AttributeFieldData = null;
+            AttributeFieldsData = null;
             SnapTime = 0;
             Array.Clear(RemainingData, 0, RemainingData.Length);
             NewSnapTime = 0;
 
-            UpdatedSnapDataSize = 0;
+            UpdatedSnapEntriesDataSize = 0;
             UpdatedSnapCount = 0;
             DictIndex = 0;
 
