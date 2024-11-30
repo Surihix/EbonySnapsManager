@@ -11,7 +11,7 @@
         Width="928" 
         TitleCharacterCasing="Normal" 
         WindowTitleBrush="Black" 
-        Icon="/images/app_icon.ico"
+        Icon="/images/titlebar.ico"
         BorderBrush="Black"
         BorderThickness="3">
     <Grid x:Name="MainWindowGrid">
