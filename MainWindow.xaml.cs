@@ -50,6 +50,7 @@ namespace EbonySnapsManager
                 AppViewModelInstance.BitmapSrc0 = null;
                 CurrentSnapshotData = SnapshotHelpers.GetImgDataFromSnapshotFile(snapshotSelect.FileName);
                 CurrentSSName = Path.GetFileName(snapshotSelect.FileName);
+
                 DrawOnImgBox(CurrentSnapshotData, 0, CurrentSSName);
             }
         }
@@ -478,9 +479,11 @@ namespace EbonySnapsManager
             if (e.ClickCount == 2)
             {
                 ImgFullScreenForm.ImgData = CurrentSnapshotData;
+                ImgFullScreenForm.IsSnapshotFile = true;
+                ImgFullScreenForm.CurrentSSName = CurrentSSName;
 
                 var imgFullScreenForm = new ImgFullScreenForm();
-                imgFullScreenForm.Show();
+                imgFullScreenForm.ShowDialog();
             }
         }
 
@@ -490,9 +493,10 @@ namespace EbonySnapsManager
             if (e.ClickCount == 2)
             {
                 ImgFullScreenForm.ImgData = CurrentImgData;
+                ImgFullScreenForm.IsSnapshotFile = false;
 
                 var imgFullScreenForm = new ImgFullScreenForm();
-                imgFullScreenForm.Show();
+                imgFullScreenForm.ShowDialog();
             }
         }
     }
