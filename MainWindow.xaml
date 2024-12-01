@@ -136,7 +136,7 @@
                         </Button>
 
                         <Button x:Name="ReplaceSnapshotBtn" Style="{StaticResource MahApps.Styles.Button.Square}" Margin="0,15,0,0" 
-                                Click="ReplaceSnapshotBtn_Click" ToolTip="Replace a existing snapshot file's data with the loaded image's data" 
+                                Click="ReplaceSnapshotBtn_Click" ToolTip="Replace an existing snapshot file's data with the loaded image's data" 
                                 ToolTipService.InitialShowDelay="10" ToolTipService.HorizontalOffset="10" ToolTipService.ShowDuration="6000">
                             <TextBlock x:Name="ReplaceSnapshotBtnTxtBlock" Text="Replace a snap"/>
                         </Button>
