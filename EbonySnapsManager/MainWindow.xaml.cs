@@ -19,7 +19,7 @@ namespace EbonySnapsManager
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
-        private static readonly Dictionary<string, string> SnapshotFilesInDirDict = new Dictionary<string, string>();
+        internal static readonly Dictionary<string, string> SnapshotFilesInDirDict = new Dictionary<string, string>();
         private readonly AppViewModel AppViewModelInstance = new AppViewModel();
 
         private static byte[] CurrentSnapshotData = new byte[] { };

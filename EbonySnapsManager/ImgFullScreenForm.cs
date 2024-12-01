@@ -4,6 +4,8 @@ using System.Drawing;
 using System.IO;
 using System.Windows;
 using System.Windows.Forms;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace EbonySnapsManager
 {
@@ -12,6 +14,8 @@ namespace EbonySnapsManager
         public static byte[] ImgData = new byte[] { };
         public static bool IsSnapshotFile;
         public static string CurrentSSName;
+        private static List<string> SnapshotFileKeys = new List<string>();
+        private static int CurrentIndex = 0;
 
         public ImgFullScreenForm()
         {
@@ -20,10 +24,17 @@ namespace EbonySnapsManager
             if (IsSnapshotFile)
             {
                 ImgPicBox.ContextMenuStrip = ImgPicBoxContextMenuStrip;
+                SnapshotFileKeys = MainWindow.SnapshotFilesInDirDict.Keys.ToList();
+                CurrentIndex = SnapshotFileKeys.IndexOf(CurrentSSName);
             }
         }
 
         private void ImgFullScreenForm_Load(object sender, EventArgs e)
+        {
+            LoadImage(ImgData);
+        }
+
+        private void LoadImage(byte[] ImgData)
         {
             using (var fullScreenImgStream = new MemoryStream())
             {
@@ -47,6 +58,23 @@ namespace EbonySnapsManager
             {
                 Close();
             }
+            else if (e.KeyCode == Keys.Up || e.KeyCode == Keys.Down)
+            {
+                NavigateImage(e.KeyCode == Keys.Up ? -1 : 1);
+            }
+        }
+
+        private void NavigateImage(int direction)
+        {
+            if (SnapshotFileKeys.Count == 0) return;
+
+            CurrentIndex = (CurrentIndex + direction + SnapshotFileKeys.Count) % SnapshotFileKeys.Count;
+            CurrentSSName = SnapshotFileKeys[CurrentIndex];
+
+            var nextFilePath = MainWindow.SnapshotFilesInDirDict[CurrentSSName];
+            ImgData = SnapshotHelpers.GetImgDataFromSnapshotFile(nextFilePath);
+
+            LoadImage(ImgData);
         }
 
         private void SaveImageToolStripMenuItem_Click(object sender, EventArgs e)
