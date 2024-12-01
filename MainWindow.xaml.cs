@@ -188,6 +188,10 @@ namespace EbonySnapsManager
                     });
                 }
             }
+            else
+            {
+                MessageBox.Show("Unable to find snapshot files on the SnapsList. Please load a valid snapshot directory before using this option", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
 

@@ -179,6 +179,9 @@
   <ItemGroup>
     <Resource Include="app_icon.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="EbonySnapsManager\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
