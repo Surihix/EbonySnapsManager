@@ -2,6 +2,7 @@
 This tool allows you to manage the snapshot image files present in FINAL FANTASY XV's photo storage menu. 
 
 Features include the ability to view the snapshot file (.ss), save the image data from the snapshot file, and the ability to add in custom image files as new snapshots into the game's photo storage menu.
+
 <br>![](images/app_repo_img.png)
 
 ## Notes:
