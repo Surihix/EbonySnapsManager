@@ -33,7 +33,7 @@ namespace EbonySnapsManager
             InitializeComponent();
             DataContext = AppViewModelInstance;
             AppViewModelInstance.IsUIenabled = true;
-            AppViewModelInstance.StatusBarTxt = "App launched!";
+            AppViewModelInstance.StatusBarTxt = "Welcome to Ebony Snaps Manager!";
         }
 
 
@@ -47,11 +47,19 @@ namespace EbonySnapsManager
 
             if (snapshotSelect.ShowDialog() == true)
             {
-                AppViewModelInstance.BitmapSrc0 = null;
-                CurrentSnapshotData = SnapshotHelpers.GetImgDataFromSnapshotFile(snapshotSelect.FileName);
-                CurrentSSName = Path.GetFileName(snapshotSelect.FileName);
+                try
+                {
+                    AppViewModelInstance.BitmapSrc0 = null;
+                    CurrentSnapshotData = SnapshotHelpers.GetImgDataFromSnapshotFile(snapshotSelect.FileName);
+                    CurrentSSName = Path.GetFileName(snapshotSelect.FileName);
 
-                DrawOnImgBox(CurrentSnapshotData, 0, CurrentSSName);
+                    DrawOnImgBox(CurrentSnapshotData, 0, CurrentSSName);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"{ex}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    AppViewModelInstance.StatusBarTxt = "Failed to load snapshot file";
+                }
             }
         }
 
@@ -69,10 +77,18 @@ namespace EbonySnapsManager
 
             if (sfd.ShowDialog() == true && sfd.FileName != null)
             {
-                var outImgFile = SnapshotHelpers.SaveImgDataToFile(sfd.FileName, Path.GetDirectoryName(sfd.FileName), CurrentSnapshotData);
+                try
+                {
+                    var outImgFile = SnapshotHelpers.SaveImgDataToFile(sfd.FileName, Path.GetDirectoryName(sfd.FileName), CurrentSnapshotData);
 
-                MessageBox.Show($"Saved image file \"{Path.GetFileName(outImgFile)}\"", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                AppViewModelInstance.StatusBarTxt = $"Saved \"{Path.GetFileName(outImgFile)}\"";
+                    MessageBox.Show($"Saved image file \"{Path.GetFileName(outImgFile)}\"", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    AppViewModelInstance.StatusBarTxt = $"Saved \"{Path.GetFileName(outImgFile)}\"";
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"{ex}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    AppViewModelInstance.StatusBarTxt = "Failed to save image file";
+                }
             }
         }
 
@@ -134,12 +150,20 @@ namespace EbonySnapsManager
         {
             if (SnapshotListbox.SelectedItem != null)
             {
-                if (File.Exists(SnapshotFilesInDirDict[(string)SnapshotListbox.SelectedItem]))
+                try
                 {
-                    var imgFile = SnapshotFilesInDirDict[(string)SnapshotListbox.SelectedItem];
-                    CurrentSnapshotData = SnapshotHelpers.GetImgDataFromSnapshotFile(imgFile);
-                    CurrentSSName = Path.GetFileName(imgFile);
-                    DrawOnImgBox(CurrentSnapshotData, 0, CurrentSSName);
+                    if (File.Exists(SnapshotFilesInDirDict[(string)SnapshotListbox.SelectedItem]))
+                    {
+                        var imgFile = SnapshotFilesInDirDict[(string)SnapshotListbox.SelectedItem];
+                        CurrentSnapshotData = SnapshotHelpers.GetImgDataFromSnapshotFile(imgFile);
+                        CurrentSSName = Path.GetFileName(imgFile);
+                        DrawOnImgBox(CurrentSnapshotData, 0, CurrentSSName);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"{ex}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    AppViewModelInstance.StatusBarTxt = "Failed to load selected snapshot file";
                 }
             }
         }
@@ -205,9 +229,17 @@ namespace EbonySnapsManager
 
             if (imgSelect.ShowDialog() == true)
             {
-                var imgFile = imgSelect.FileName;
-                CurrentImgData = File.ReadAllBytes(imgFile);
-                DrawOnImgBox(CurrentImgData, 1, Path.GetFileName(imgFile));
+                try
+                {
+                    var imgFile = imgSelect.FileName;
+                    CurrentImgData = File.ReadAllBytes(imgFile);
+                    DrawOnImgBox(CurrentImgData, 1, Path.GetFileName(imgFile));
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"{ex}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    AppViewModelInstance.StatusBarTxt = "Failed to load image file";
+                }
             }
         }
 
@@ -295,11 +327,19 @@ namespace EbonySnapsManager
 
                 if (snapshotFileSelect.ShowDialog() == true)
                 {
-                    SnapshotHelpers.CreateSnapshotFile(snapshotFileSelect.FileName, CurrentImgData);
+                    try
+                    {
+                        SnapshotHelpers.CreateSnapshotFile(snapshotFileSelect.FileName, CurrentImgData);
 
-                    MessageBox.Show($"Replaced image data in \"{Path.GetFileName(snapshotFileSelect.FileName)}\"", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                        MessageBox.Show($"Replaced image data in \"{Path.GetFileName(snapshotFileSelect.FileName)}\"", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                    AppViewModelInstance.StatusBarTxt = $"Replaced data in \"{Path.GetFileName(snapshotFileSelect.FileName)}\"";
+                        AppViewModelInstance.StatusBarTxt = $"Replaced data in \"{Path.GetFileName(snapshotFileSelect.FileName)}\"";
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"{ex}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        AppViewModelInstance.StatusBarTxt = "Failed to replace snapshot file's data";
+                    }
                 }
             }
         }

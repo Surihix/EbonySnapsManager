@@ -92,36 +92,36 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
+    <ApplicationDefinition Include="EbonySnapsManager\App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Crypto\CryptoVariables.cs" />
-    <Compile Include="Crypto\Decrypt.cs" />
-    <Compile Include="Crypto\Encrypt.cs" />
-    <Compile Include="Crypto\MersenneTwister.cs" />
-    <Compile Include="Crypto\SharedCryptoFunctions.cs" />
-    <Compile Include="Extensions\BinaryReaderHelpers.cs" />
-    <Compile Include="ImgFullScreenForm.cs">
+    <Compile Include="EbonySnapsManager\Crypto\CryptoVariables.cs" />
+    <Compile Include="EbonySnapsManager\Crypto\Decrypt.cs" />
+    <Compile Include="EbonySnapsManager\Crypto\Encrypt.cs" />
+    <Compile Include="EbonySnapsManager\Crypto\MersenneTwister.cs" />
+    <Compile Include="EbonySnapsManager\Crypto\SharedCryptoFunctions.cs" />
+    <Compile Include="EbonySnapsManager\Extensions\BinaryReaderHelpers.cs" />
+    <Compile Include="EbonySnapsManager\ImgFullScreenForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ImgFullScreenForm.Designer.cs">
+    <Compile Include="EbonySnapsManager\ImgFullScreenForm.Designer.cs">
       <DependentUpon>ImgFullScreenForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="LargeProcesses\SavedataProcesses.cs" />
-    <Compile Include="Helpers\SavedataHelpers.cs" />
-    <Compile Include="Helpers\SnapshotHelpers.cs" />
-    <Compile Include="AppViewModel.cs" />
-    <Compile Include="LargeProcesses\SnapshotProcesses.cs" />
-    <Page Include="MainWindow.xaml">
+    <Compile Include="EbonySnapsManager\LargeProcesses\SavedataProcesses.cs" />
+    <Compile Include="EbonySnapsManager\Helpers\SavedataHelpers.cs" />
+    <Compile Include="EbonySnapsManager\Helpers\SnapshotHelpers.cs" />
+    <Compile Include="EbonySnapsManager\AppViewModel.cs" />
+    <Compile Include="EbonySnapsManager\LargeProcesses\SnapshotProcesses.cs" />
+    <Page Include="EbonySnapsManager\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="App.xaml.cs">
+    <Compile Include="EbonySnapsManager\App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="EbonySnapsManager\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
@@ -140,7 +140,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <EmbeddedResource Include="ImgFullScreenForm.resx">
+    <EmbeddedResource Include="EbonySnapsManager\ImgFullScreenForm.resx">
       <DependentUpon>ImgFullScreenForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -179,9 +179,7 @@
   <ItemGroup>
     <Resource Include="app_icon.ico" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="EbonySnapsManager\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
