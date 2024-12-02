@@ -76,8 +76,8 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                                                
-                        <ListBox x:Name="SnapshotListbox" Grid.Row="0" Grid.Column="1" BorderThickness="1" BorderBrush="LightGray" SelectionChanged="SnapshotListbox_SelectionChanged"/>
+
+                        <ListBox x:Name="SnapshotListbox" Grid.Row="0" Grid.Column="1" BorderThickness="1" BorderBrush="LightGray" ItemsSource="{Binding ListboxItemsSource}" SelectionChanged="SnapshotListbox_SelectionChanged"/>
 
                         <Button x:Name="SaveSnapshotsInListBtn" Style="{StaticResource MahApps.Styles.Button.Square}" Grid.Row="2" Grid.Column="4" 
                                 IsEnabled="{Binding IsUIenabled}" Click="SaveSnapshotsInListBtn_Click" ToolTip="Save all snapshot(s) to individual image files" 

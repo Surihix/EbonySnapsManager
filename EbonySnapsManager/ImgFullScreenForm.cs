@@ -65,11 +65,11 @@ namespace EbonySnapsManager
             }
             else if (e.KeyCode == Keys.Up || e.KeyCode == Keys.Left)
             {
-                NavigateImage(-1); // Move to the previous image
+                NavigateImage(-1);
             }
             else if (e.KeyCode == Keys.Down || e.KeyCode == Keys.Right)
             {
-                NavigateImage(1); // Move to the next image
+                NavigateImage(1);
             }
         }
 

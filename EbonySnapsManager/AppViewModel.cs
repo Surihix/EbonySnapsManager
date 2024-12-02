@@ -1,10 +1,16 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Windows.Media.Imaging;
 
 namespace EbonySnapsManager
 {
     public class AppViewModel : INotifyPropertyChanged
     {
+        public AppViewModel()
+        {
+            _listboxItemsSource = new ObservableCollection<string>();
+        }
+
         private bool _isUIenabled;
         public bool IsUIenabled
         {
@@ -37,7 +43,7 @@ namespace EbonySnapsManager
         public BitmapImage BitmapSrc0
         {
             get { return _bitmapSrc0; }
-            set 
+            set
             {
                 if (_bitmapSrc0 != value)
                 {
@@ -57,6 +63,20 @@ namespace EbonySnapsManager
                 {
                     _bitmapSrc1 = value;
                     OnPropertyChanged(nameof(BitmapSrc1));
+                }
+            }
+        }
+
+        private ObservableCollection<string> _listboxItemsSource;
+        public ObservableCollection<string> ListboxItemsSource
+        {
+            get { return _listboxItemsSource; }
+            set
+            {
+                if (_listboxItemsSource != value)
+                {
+                    _listboxItemsSource = value;
+                    OnPropertyChanged(nameof(ListboxItemsSource));
                 }
             }
         }

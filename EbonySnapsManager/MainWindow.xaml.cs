@@ -26,7 +26,6 @@ namespace EbonySnapsManager
         private static byte[] CurrentImgData = new byte[] { };
 
         public static string CurrentSSName { get; set; }
-        private static ListBox SnapshotListBoxComp { get; set; }
 
         public MainWindow()
         {
@@ -113,20 +112,19 @@ namespace EbonySnapsManager
                 {
                     AppViewModelInstance.StatusBarTxt = "Loading snapshot files....";
                     AppViewModelInstance.IsUIenabled = false;
-                    SnapshotListBoxComp = (ListBox)FindName("SnapshotListbox");
 
                     Task.Run(() =>
                     {
                         try
                         {
-                            SnapshotListBoxComp.BeginInvoke(new Action(() => SnapshotListBoxComp.Items.Clear()));
+                            Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.ListboxItemsSource.Clear()));
                             SnapshotFilesInDirDict.Clear();
 
                             foreach (var ssFile in snapshotDir)
                             {
                                 var ssFileName = Path.GetFileName(ssFile);
                                 SnapshotFilesInDirDict.Add(ssFileName, ssFile);
-                                SnapshotListBoxComp.BeginInvoke(new Action(() => SnapshotListBoxComp.Items.Add(ssFileName)));
+                                Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.ListboxItemsSource.Add(ssFileName)));
                             }
 
                             Dispatcher.BeginInvoke(new Action(() => AppViewModelInstance.StatusBarTxt = "Loaded snapshot files from directory"));
