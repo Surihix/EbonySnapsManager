@@ -1,11 +1,11 @@
 ﻿using EbonySnapsManager.Helpers;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace EbonySnapsManager
 {
@@ -16,6 +16,7 @@ namespace EbonySnapsManager
         public static string CurrentSSName;
         private static List<string> SnapshotFileKeys = new List<string>();
         private static int CurrentIndex = 0;
+
 
         public ImgFullScreenForm()
         {
@@ -29,10 +30,12 @@ namespace EbonySnapsManager
             }
         }
 
+
         private void ImgFullScreenForm_Load(object sender, EventArgs e)
         {
             LoadImage(ImgData);
         }
+
 
         private void LoadImage(byte[] ImgData)
         {
@@ -47,10 +50,12 @@ namespace EbonySnapsManager
             }
         }
 
+
         private void ImgPicBox_DoubleClick(object sender, EventArgs e)
         {
             Close();
         }
+
 
         private void ImgFullScreenForm_KeyDown(object sender, KeyEventArgs e)
         {
@@ -71,7 +76,15 @@ namespace EbonySnapsManager
 
         private void NavigateImage(int direction)
         {
-            if (SnapshotFileKeys.Count == 0) return;
+            if (!IsSnapshotFile)
+            {
+                return;
+            }
+
+            if (SnapshotFileKeys.Count == 0)
+            {
+                return;
+            }
 
             CurrentIndex = (CurrentIndex + direction + SnapshotFileKeys.Count) % SnapshotFileKeys.Count;
             CurrentSSName = SnapshotFileKeys[CurrentIndex];
@@ -81,6 +94,7 @@ namespace EbonySnapsManager
 
             LoadImage(ImgData);
         }
+
 
         private void SaveImageToolStripMenuItem_Click(object sender, EventArgs e)
         {
