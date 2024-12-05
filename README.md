@@ -1,7 +1,12 @@
 # EbonySnapsManager
 This tool allows you to manage the snapshot image files present in FINAL FANTASY XV's photo storage menu. 
 
-Features include the ability to view the snapshot file (.ss), save the image data from the snapshot file, and the ability to add in custom image files as new snapshots into the game's photo storage menu.
+Features include: 
+- View one or more snapshot (.ss) files.
+- Save the image data from a snapshot file, to a common image format.
+- Replace an existing snapshot file's image data with a different one.
+- Add in custom image files as new snapshots into the game's photo storage menu.
+- Remove blank snapshot entries from your photo storage menu.
 
 <br>![repoImg](images/app_repo_img.png)
 
