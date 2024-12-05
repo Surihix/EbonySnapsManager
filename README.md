@@ -6,7 +6,7 @@ Features include:
 - Save the image data from a snapshot file, to a common image format.
 - Replace an existing snapshot file's image data with a different one.
 - Add in custom image files as new snapshots into the game's photo storage menu.
-- Remove blank snapshot entries from your photo storage menu.
+- Remove blank snapshot entries from the game's photo storage menu.
 
 <br>![repoImg](images/app_repo_img.png)
 
